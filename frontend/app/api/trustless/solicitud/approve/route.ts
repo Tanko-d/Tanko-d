@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { peticionId, montoAprobado } = body
+    const { requestId, approvedAmount } = body
 
     return NextResponse.json({
-      id: peticionId,
-      estado: 'APROBADA',
-      montoAprobado: montoAprobado || 0,
+      id: requestId,
+      status: 'APPROVED',
+      approvedAmount: approvedAmount || 0,
       approvedAt: new Date().toISOString(),
     })
   } catch (error: any) {

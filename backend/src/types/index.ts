@@ -76,8 +76,8 @@ export interface EscrowStatus {
 
 export interface FundRequest {
   id: string;
-  conductorPublicKey: string;
-  jefePublicKey: string;
+  driverPublicKey: string;
+  managerPublicKey: string;
   amount: string;
   description: string;
   status: 'pending' | 'approved' | 'rejected' | 'released';
@@ -94,7 +94,7 @@ export interface FundRequestPayload {
 
 export interface ApproveFundRequestPayload {
   requestId: string;
-  jefeSecret: string;
+  managerSecret: string;
   createNewEscrow?: boolean;
 }
 

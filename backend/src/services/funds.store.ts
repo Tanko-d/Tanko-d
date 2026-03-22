@@ -22,20 +22,20 @@ export class FundRequestStore {
     return fundRequests.get(id);
   }
 
-  getByConductor(conductorPublicKey: string): FundRequest[] {
+  getByDriver(driverPublicKey: string): FundRequest[] {
     return Array.from(fundRequests.values()).filter(
-      (r) => r.conductorPublicKey === conductorPublicKey
+      (r) => r.driverPublicKey === driverPublicKey
     );
   }
 
-  getByJefe(jefePublicKey: string): FundRequest[] {
+  getByManager(managerPublicKey: string): FundRequest[] {
     return Array.from(fundRequests.values()).filter(
-      (r) => r.jefePublicKey === jefePublicKey
+      (r) => r.managerPublicKey === managerPublicKey
     );
   }
 
-  getPendingByJefe(jefePublicKey: string): FundRequest[] {
-    return this.getByJefe(jefePublicKey).filter((r) => r.status === 'pending');
+  getPendingByManager(managerPublicKey: string): FundRequest[] {
+    return this.getByManager(managerPublicKey).filter((r) => r.status === 'pending');
   }
 
   update(id: string, data: Partial<FundRequest>): FundRequest | undefined {

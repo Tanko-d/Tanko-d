@@ -60,73 +60,73 @@ const stats = [
 ]
 
 const consumptionData = [
-  { mes: "Jan", consumo: 85000, litros: 3200 },
-  { mes: "Feb", consumo: 92000, litros: 3450 },
-  { mes: "Mar", consumo: 78000, litros: 2980 },
-  { mes: "Apr", consumo: 105000, litros: 4100 },
-  { mes: "May", consumo: 112000, litros: 4350 },
-  { mes: "Jun", consumo: 98000, litros: 3800 },
+  { month: "Jan", spend: 85000, liters: 3200 },
+  { month: "Feb", spend: 92000, liters: 3450 },
+  { month: "Mar", spend: 78000, liters: 2980 },
+  { month: "Apr", spend: 105000, liters: 4100 },
+  { month: "May", spend: 112000, liters: 4350 },
+  { month: "Jun", spend: 98000, liters: 3800 },
 ]
 
 const recentTransactions = [
   {
     id: 1,
-    usuario: "Juan Pérez",
-    unidad: "Kenworth T680",
-    placas: "ABC-123-D",
-    ubicacion: "Central CDMX Station",
-    monto: 4500,
-    litros: 180,
-    fecha: "Today, 10:32 AM"
+    driver: "Juan Pérez",
+    unit: "Kenworth T680",
+    plates: "ABC-123-D",
+    location: "Central CDMX Station",
+    amount: 4500,
+    liters: 180,
+    date: "Today, 10:32 AM"
   },
   {
     id: 2,
-    usuario: "María García",
-    unidad: "Freightliner Cascadia",
-    placas: "DEF-456-E",
-    ubicacion: "Reforma Station",
-    monto: 3200,
-    litros: 128,
-    fecha: "Today, 09:15 AM"
+    driver: "María García",
+    unit: "Freightliner Cascadia",
+    plates: "DEF-456-E",
+    location: "Reforma Station",
+    amount: 3200,
+    liters: 128,
+    date: "Today, 09:15 AM"
   },
   {
     id: 3,
-    usuario: "Carlos López",
-    unidad: "Volvo VNL",
-    placas: "GHI-789-F",
-    ubicacion: "North Station",
-    monto: 5100,
-    litros: 204,
-    fecha: "Yesterday, 06:45 PM"
+    driver: "Carlos López",
+    unit: "Volvo VNL",
+    plates: "GHI-789-F",
+    location: "North Station",
+    amount: 5100,
+    liters: 204,
+    date: "Yesterday, 06:45 PM"
   },
   {
     id: 4,
-    usuario: "Ana Martínez",
-    unidad: "International LT",
-    placas: "JKL-012-G",
-    ubicacion: "South Express Station",
-    monto: 2800,
-    litros: 112,
-    fecha: "Yesterday, 03:20 PM"
+    driver: "Ana Martínez",
+    unit: "International LT",
+    plates: "JKL-012-G",
+    location: "South Express Station",
+    amount: 2800,
+    liters: 112,
+    date: "Yesterday, 03:20 PM"
   },
   {
     id: 5,
-    usuario: "Roberto Sánchez",
-    unidad: "Peterbilt 579",
-    placas: "MNO-345-H",
-    ubicacion: "East Station",
-    monto: 4200,
-    litros: 168,
-    fecha: "Yesterday, 11:00 AM"
+    driver: "Roberto Sánchez",
+    unit: "Peterbilt 579",
+    plates: "MNO-345-H",
+    location: "East Station",
+    amount: 4200,
+    liters: 168,
+    date: "Yesterday, 11:00 AM"
   },
 ]
 
 const topUnits = [
-  { unidad: "Kenworth T680", placas: "ABC-123-D", consumo: 85000, litros: 3400 },
-  { unidad: "Freightliner Cascadia", placas: "DEF-456-E", consumo: 72000, litros: 2880 },
-  { unidad: "Volvo VNL", placas: "GHI-789-F", consumo: 68000, litros: 2720 },
-  { unidad: "International LT", placas: "JKL-012-G", consumo: 55000, litros: 2200 },
-  { unidad: "Peterbilt 579", placas: "MNO-345-H", consumo: 48000, litros: 1920 },
+  { unit: "Kenworth T680", plates: "ABC-123-D", spend: 85000, liters: 3400 },
+  { unit: "Freightliner Cascadia", plates: "DEF-456-E", spend: 72000, liters: 2880 },
+  { unit: "Volvo VNL", plates: "GHI-789-F", spend: 68000, liters: 2720 },
+  { unit: "International LT", plates: "JKL-012-G", spend: 55000, liters: 2200 },
+  { unit: "Peterbilt 579", plates: "MNO-345-H", spend: 48000, liters: 1920 },
 ]
 
 export default function DashboardPage() {
@@ -177,10 +177,10 @@ export default function DashboardPage() {
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={consumptionData}>
+                  <AreaChart data={consumptionData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis 
-                    dataKey="mes" 
+                    dataKey="month" 
                     className="text-xs text-muted-foreground"
                     tick={{ fill: 'currentColor' }}
                   />
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                   />
                   <Area 
                     type="monotone" 
-                    dataKey="consumo" 
+                    dataKey="spend" 
                     stroke="hsl(var(--primary))" 
                     fill="hsl(var(--primary) / 0.2)" 
                     strokeWidth={2}
@@ -218,10 +218,10 @@ export default function DashboardPage() {
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={consumptionData}>
+                  <BarChart data={consumptionData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                   <XAxis 
-                    dataKey="mes" 
+                    dataKey="month" 
                     className="text-xs text-muted-foreground"
                     tick={{ fill: 'currentColor' }}
                   />
@@ -238,7 +238,7 @@ export default function DashboardPage() {
                     }}
                   />
                   <Bar 
-                    dataKey="litros" 
+                    dataKey="liters" 
                     fill="hsl(var(--primary))" 
                     radius={[4, 4, 0, 0]}
                   />
@@ -268,13 +268,13 @@ export default function DashboardPage() {
                       <Fuel className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{tx.usuario}</p>
-                      <p className="text-xs text-muted-foreground">{tx.unidad} - {tx.placas}</p>
+                      <p className="text-sm font-medium text-foreground">{tx.driver}</p>
+                      <p className="text-xs text-muted-foreground">{tx.unit} - {tx.plates}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-foreground">${tx.monto.toLocaleString("en-US")}</p>
-                    <p className="text-xs text-muted-foreground">{tx.litros} L</p>
+                    <p className="text-sm font-semibold text-foreground">${tx.amount.toLocaleString("en-US")}</p>
+                    <p className="text-xs text-muted-foreground">{tx.liters} L</p>
                   </div>
                 </div>
               ))}
@@ -291,7 +291,7 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {topUnits.map((unit, index) => (
                 <div 
-                  key={unit.placas} 
+                  key={unit.plates} 
                   className="flex items-center justify-between rounded-lg border border-border p-3"
                 >
                   <div className="flex items-center gap-3">
@@ -299,13 +299,13 @@ export default function DashboardPage() {
                       #{index + 1}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{unit.unidad}</p>
-                      <p className="text-xs text-muted-foreground">{unit.placas}</p>
+                      <p className="text-sm font-medium text-foreground">{unit.unit}</p>
+                      <p className="text-xs text-muted-foreground">{unit.plates}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-foreground">${unit.consumo.toLocaleString("en-US")}</p>
-                    <p className="text-xs text-muted-foreground">{unit.litros.toLocaleString("en-US")} L</p>
+                    <p className="text-sm font-semibold text-foreground">${unit.spend.toLocaleString("en-US")}</p>
+                    <p className="text-xs text-muted-foreground">{unit.liters.toLocaleString("en-US")} L</p>
                   </div>
                 </div>
               ))}

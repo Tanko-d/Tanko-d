@@ -11,79 +11,79 @@ import {
 const benefits = [
   {
     icon: Percent,
-    title: "Comisiones Más Bajas",
-    description: "Ofrecemos las comisiones más competitivas del mercado. Ahorra hasta un 60% en comparación con otros proveedores de monederos electrónicos.",
+    title: "Lowest Fees",
+    description: "We offer the most competitive fees in the market. Save up to 60% compared to other e-wallet providers.",
     features: [
-      "Solo 0.5% por transacción",
-      "Sin costos ocultos",
-      "Ahorro garantizado"
+      "Only 0.5% per transaction",
+      "No hidden costs",
+      "Guaranteed savings"
     ]
   },
   {
     icon: Zap,
-    title: "Registro Ultrarrápido",
-    description: "Completa tu registro en menos de 5 minutos. Proceso simplificado sin papeleo innecesario ni largos tiempos de espera.",
+    title: "Ultra-Fast Onboarding",
+    description: "Complete your registration in under 5 minutes. Streamlined process with no unnecessary paperwork or long wait times.",
     features: [
-      "Registro en 5 minutos",
-      "Verificación automática",
-      "Activación inmediata"
+      "Sign up in 5 minutes",
+      "Automatic verification",
+      "Immediate activation"
     ]
   },
   {
     icon: MapPin,
-    title: "Red de Estaciones",
-    description: "Accede a más de 5,000 estaciones de servicio en todo el país. Encuentra la estación más cercana con nuestro mapa interactivo.",
+    title: "Station Network",
+    description: "Access over 5,000 service stations nationwide. Find the nearest station with our interactive map.",
     features: [
-      "Cobertura nacional",
-      "Mapa en tiempo real",
-      "Beneficios exclusivos"
+      "Nationwide coverage",
+      "Real-time map",
+      "Exclusive benefits"
     ]
   },
   {
     icon: BarChart3,
-    title: "Control Total de Gastos",
-    description: "Monitorea cada transacción con reportes detallados. Visualiza el consumo por unidad, ubicación y período de tiempo.",
+    title: "Full Spend Control",
+    description: "Monitor every transaction with detailed reports. View consumption by unit, location, and time period.",
     features: [
-      "Reportes en tiempo real",
-      "Análisis por unidad",
-      "Exportación de datos"
+      "Real-time reports",
+      "Per-unit analytics",
+      "Data export"
     ]
   },
   {
     icon: CreditCard,
-    title: "Pagos Seguros",
-    description: "Tecnología de encriptación de última generación. Tus transacciones están protegidas con los más altos estándares de seguridad.",
+    title: "Secure Payments",
+    description: "State-of-the-art encryption technology. Your transactions are protected by the highest security standards.",
     features: [
-      "Encriptación SSL",
-      "Protección antifraude",
-      "Transacciones seguras"
+      "SSL encryption",
+      "Fraud protection",
+      "Secure transactions"
     ]
   },
   {
     icon: Users,
-    title: "Gestión de Flotas",
-    description: "Administra múltiples unidades y conductores desde un solo panel. Control centralizado para empresas de cualquier tamaño.",
+    title: "Fleet Management",
+    description: "Manage multiple units and drivers from a single panel. Centralized control for companies of any size.",
     features: [
-      "Múltiples usuarios",
-      "Límites por unidad",
-      "Alertas personalizadas"
+      "Multiple users",
+      "Per-unit limits",
+      "Custom alerts"
     ]
   }
 ]
 
 export function BenefitsSection() {
   return (
-    <section id="beneficios" className="bg-card py-20 md:py-28">
+    <section id="benefits" className="bg-card py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-            Beneficios
+            Benefits
           </span>
           <h2 className="mt-6 text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
-            Lo que nos diferencia del resto
+            What sets us apart
           </h2>
           <p className="mt-4 text-pretty text-lg text-muted-foreground">
-            Diseñado para empresas de transporte y flotillas que buscan optimizar sus gastos en combustible con la mejor tecnología y servicio.
+            Built for transport companies and fleets that want to optimize fuel spending with the best technology and service.
           </p>
         </div>
 

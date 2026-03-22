@@ -14,16 +14,16 @@ import axios from 'axios';
 
 export class FundsService {
   async createRequest(
-    conductorPublicKey: string,
+    driverPublicKey: string,
     payload: FundRequestPayload,
-    jefePublicKey: string
+    managerPublicKey: string
   ): Promise<{ success: boolean; data?: FundRequest; error?: string }> {
-    if (!stellarService.validatePublicKey(conductorPublicKey)) {
-      return { success: false, error: 'Invalid conductor public key' };
+    if (!stellarService.validatePublicKey(driverPublicKey)) {
+      return { success: false, error: 'Invalid driver public key' };
     }
 
-    if (!stellarService.validatePublicKey(jefePublicKey)) {
-      return { success: false, error: 'Invalid jefe public key' };
+    if (!stellarService.validatePublicKey(managerPublicKey)) {
+      return { success: false, error: 'Invalid manager public key' };
     }
 
     const amount = BigInt(payload.amount);
@@ -32,8 +32,8 @@ export class FundsService {
     }
 
     const request = fundRequestStore.create({
-      conductorPublicKey,
-      jefePublicKey,
+      driverPublicKey,
+      managerPublicKey,
       amount: payload.amount,
       description: payload.description,
     });
@@ -43,9 +43,9 @@ export class FundsService {
 
   async approveRequest(
     payload: ApproveFundRequestPayload,
-    jefePublicKey: string
+    managerPublicKey: string
   ): Promise<{ success: boolean; data?: FundRequest; error?: string }> {
-    if (!stellarService.validateSecretKey(payload.jefeSecret)) {
+    if (!stellarService.validateSecretKey(payload.managerSecret)) {
       return { success: false, error: 'Invalid secret key' };
     }
 
@@ -58,8 +58,8 @@ export class FundsService {
       return { success: false, error: `Request is already ${request.status}` };
     }
 
-    if (request.jefePublicKey !== jefePublicKey) {
-      return { success: false, error: 'Only the assigned jefe can approve this request' };
+    if (request.managerPublicKey !== managerPublicKey) {
+      return { success: false, error: 'Only the assigned manager can approve this request' };
     }
 
     const usdcTrustline = {
@@ -68,12 +68,12 @@ export class FundsService {
     };
 
     const escrowPayload: CreateEscrowPayload = {
-      signer: jefePublicKey,
+      signer: managerPublicKey,
       engagementId: `FUND-REQ-${request.id.substring(0, 8)}`,
       roles: {
-        sender: jefePublicKey,
-        approver: jefePublicKey,
-        receiver: request.conductorPublicKey,
+        sender: managerPublicKey,
+        approver: managerPublicKey,
+        receiver: request.driverPublicKey,
       },
       amount: request.amount,
       description: request.description,
@@ -88,7 +88,7 @@ export class FundsService {
 
     const signedXdr = stellarService.signTransaction(
       escrowResult.data.xdr,
-      payload.jefeSecret
+      payload.managerSecret
     );
 
     const submitResult = await stellarService.submitTransaction(signedXdr);
@@ -107,10 +107,10 @@ export class FundsService {
 
   async releaseFunds(
     requestId: string,
-    jefeSecret: string,
-    jefePublicKey: string
+    managerSecret: string,
+    managerPublicKey: string
   ): Promise<{ success: boolean; txHash?: string; error?: string }> {
-    if (!stellarService.validateSecretKey(jefeSecret)) {
+    if (!stellarService.validateSecretKey(managerSecret)) {
       return { success: false, error: 'Invalid secret key' };
     }
 
@@ -144,8 +144,8 @@ export class FundsService {
     const approveResult = await trustlessWorkService.approveMilestone({
       contractId: request.contractId,
       milestoneIndex: 0,
-      signer: jefePublicKey,
-      rolePublicKey: jefePublicKey,
+      signer: managerPublicKey,
+      rolePublicKey: managerPublicKey,
     });
 
     if (!approveResult.success || !approveResult.data) {
@@ -154,14 +154,14 @@ export class FundsService {
 
     const signedApproveXdr = stellarService.signTransaction(
       approveResult.data.xdr,
-      jefeSecret
+      managerSecret
     );
     await stellarService.submitTransaction(signedApproveXdr);
 
     const releaseResult = await trustlessWorkService.releaseFunds({
       contractId: request.contractId,
-      signer: jefePublicKey,
-      rolePublicKey: jefePublicKey,
+      signer: managerPublicKey,
+      rolePublicKey: managerPublicKey,
     });
 
     if (!releaseResult.success || !releaseResult.data) {
@@ -170,7 +170,7 @@ export class FundsService {
 
     const signedReleaseXdr = stellarService.signTransaction(
       releaseResult.data.xdr,
-      jefeSecret
+      managerSecret
     );
     const txResult = await stellarService.submitTransaction(signedReleaseXdr);
 
@@ -181,7 +181,7 @@ export class FundsService {
 
   rejectRequest(
     payload: RejectFundRequestPayload,
-    jefePublicKey: string
+    managerPublicKey: string
   ): { success: boolean; data?: FundRequest; error?: string } {
     const request = fundRequestStore.getById(payload.requestId);
     if (!request) {
@@ -192,8 +192,8 @@ export class FundsService {
       return { success: false, error: `Cannot reject request with status: ${request.status}` };
     }
 
-    if (request.jefePublicKey !== jefePublicKey) {
-      return { success: false, error: 'Only the assigned jefe can reject this request' };
+    if (request.managerPublicKey !== managerPublicKey) {
+      return { success: false, error: 'Only the assigned manager can reject this request' };
     }
 
     fundRequestStore.update(request.id, {
@@ -214,13 +214,13 @@ export class FundsService {
     return { success: true, data: request };
   }
 
-  getPendingRequests(jefePublicKey: string): { success: boolean; data?: FundRequest[] } {
-    const requests = fundRequestStore.getPendingByJefe(jefePublicKey);
+  getPendingRequests(managerPublicKey: string): { success: boolean; data?: FundRequest[] } {
+    const requests = fundRequestStore.getPendingByManager(managerPublicKey);
     return { success: true, data: requests };
   }
 
-  getRequestsByConductor(conductorPublicKey: string): { success: boolean; data?: FundRequest[] } {
-    const requests = fundRequestStore.getByConductor(conductorPublicKey);
+  getRequestsByDriver(driverPublicKey: string): { success: boolean; data?: FundRequest[] } {
+    const requests = fundRequestStore.getByDriver(driverPublicKey);
     return { success: true, data: requests };
   }
 

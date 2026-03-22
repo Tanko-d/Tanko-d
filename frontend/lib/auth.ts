@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         const user = DEMO_USERS.find(
           u => u.email === credentials?.email && u.password === credentials?.password
         )
-        if (!user) throw new Error('Credenciales inválidas')
+        if (!user) throw new Error('Invalid credentials')
         return user
       },
     }),

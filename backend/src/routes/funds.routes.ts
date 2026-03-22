@@ -15,7 +15,7 @@ router.get('/funds/request/:id', (req, res) => fundsController.getRequest(req, r
 
 router.get('/funds/pending', (req, res) => fundsController.getPendingRequests(req, res));
 
-router.get('/funds/conductor/:publicKey', (req, res) => fundsController.getRequestsByConductor(req, res));
+router.get('/funds/driver/:publicKey', (req, res) => fundsController.getRequestsByDriver(req, res));
 
 router.post('/accounts/create', (req, res) => fundsController.createTestnetAccount(req, res));
 

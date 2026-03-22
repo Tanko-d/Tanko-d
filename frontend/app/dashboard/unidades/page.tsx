@@ -37,68 +37,68 @@ import { Textarea } from "@/components/ui/textarea"
 const units = [
   {
     id: 1,
-    marca: "Kenworth",
-    modelo: "T680",
-    anio: 2023,
-    placas: "ABC-123-D",
-    usuario: "Juan Pérez García",
-    especificaciones: "Cummins X15 engine, 500 HP, 300-gal tank",
-    numeroPermiso: "PERM-2024-12345",
-    vigenciaPermiso: "2025-06-15",
-    consumoMes: 25000,
-    estado: "activo"
+    make: "Kenworth",
+    model: "T680",
+    year: 2023,
+    plates: "ABC-123-D",
+    driver: "Juan Pérez García",
+    specs: "Cummins X15 engine, 500 HP, 300-gal tank",
+    permitNumber: "PERM-2024-12345",
+    permitExpiry: "2025-06-15",
+    monthlySpend: 25000,
+    status: "active"
   },
   {
     id: 2,
-    marca: "Freightliner",
-    modelo: "Cascadia",
-    anio: 2022,
-    placas: "DEF-456-E",
-    usuario: "María García López",
-    especificaciones: "Detroit DD15 engine, 475 HP, 280-gal tank",
-    numeroPermiso: "PERM-2024-23456",
-    vigenciaPermiso: "2025-08-20",
-    consumoMes: 32000,
-    estado: "activo"
+    make: "Freightliner",
+    model: "Cascadia",
+    year: 2022,
+    plates: "DEF-456-E",
+    driver: "María García López",
+    specs: "Detroit DD15 engine, 475 HP, 280-gal tank",
+    permitNumber: "PERM-2024-23456",
+    permitExpiry: "2025-08-20",
+    monthlySpend: 32000,
+    status: "active"
   },
   {
     id: 3,
-    marca: "Volvo",
-    modelo: "VNL 860",
-    anio: 2024,
-    placas: "GHI-789-F",
-    usuario: "Carlos López Martínez",
-    especificaciones: "Volvo D13 engine, 455 HP, 320-gal tank",
-    numeroPermiso: "PERM-2024-34567",
-    vigenciaPermiso: "2025-12-10",
-    consumoMes: 28000,
-    estado: "activo"
+    make: "Volvo",
+    model: "VNL 860",
+    year: 2024,
+    plates: "GHI-789-F",
+    driver: "Carlos López Martínez",
+    specs: "Volvo D13 engine, 455 HP, 320-gal tank",
+    permitNumber: "PERM-2024-34567",
+    permitExpiry: "2025-12-10",
+    monthlySpend: 28000,
+    status: "active"
   },
   {
     id: 4,
-    marca: "International",
-    modelo: "LT",
-    anio: 2021,
-    placas: "JKL-012-G",
-    usuario: "Ana Martínez Rodríguez",
-    especificaciones: "Cummins X15 engine, 450 HP, 260-gal tank",
-    numeroPermiso: "PERM-2024-45678",
-    vigenciaPermiso: "2024-03-25",
-    consumoMes: 18000,
-    estado: "inactivo"
+    make: "International",
+    model: "LT",
+    year: 2021,
+    plates: "JKL-012-G",
+    driver: "Ana Martínez Rodríguez",
+    specs: "Cummins X15 engine, 450 HP, 260-gal tank",
+    permitNumber: "PERM-2024-45678",
+    permitExpiry: "2024-03-25",
+    monthlySpend: 18000,
+    status: "inactive"
   },
   {
     id: 5,
-    marca: "Peterbilt",
-    modelo: "579",
-    anio: 2023,
-    placas: "MNO-345-H",
-    usuario: "Roberto Sánchez Fernández",
-    especificaciones: "PACCAR MX-13 engine, 510 HP, 290-gal tank",
-    numeroPermiso: "PERM-2024-56789",
-    vigenciaPermiso: "2025-09-30",
-    consumoMes: 35000,
-    estado: "activo"
+    make: "Peterbilt",
+    model: "579",
+    year: 2023,
+    plates: "MNO-345-H",
+    driver: "Roberto Sánchez Fernández",
+    specs: "PACCAR MX-13 engine, 510 HP, 290-gal tank",
+    permitNumber: "PERM-2024-56789",
+    permitExpiry: "2025-09-30",
+    monthlySpend: 35000,
+    status: "active"
   },
 ]
 
@@ -107,10 +107,10 @@ export default function UnidadesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const filteredUnits = units.filter(unit =>
-    unit.marca.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    unit.modelo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    unit.placas.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    unit.usuario.toLowerCase().includes(searchQuery.toLowerCase())
+    unit.make.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    unit.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    unit.plates.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    unit.driver.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -138,40 +138,40 @@ export default function UnidadesPage() {
             <form className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="marca">Make</Label>
-                  <Input id="marca" placeholder="e.g. Kenworth" />
+                  <Label htmlFor="make">Make</Label>
+                  <Input id="make" placeholder="e.g. Kenworth" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modelo">Model</Label>
-                  <Input id="modelo" placeholder="e.g. T680" />
+                  <Label htmlFor="model">Model</Label>
+                  <Input id="model" placeholder="e.g. T680" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="anio">Year</Label>
-                  <Input id="anio" type="number" placeholder="e.g. 2023" />
+                  <Label htmlFor="year">Year</Label>
+                  <Input id="year" type="number" placeholder="e.g. 2023" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="placas">Plates</Label>
-                  <Input id="placas" placeholder="e.g. ABC-123-D" />
+                  <Label htmlFor="plates">Plates</Label>
+                  <Input id="plates" placeholder="e.g. ABC-123-D" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="especificaciones">Specifications</Label>
+                <Label htmlFor="specs">Specifications</Label>
                 <Textarea
-                  id="especificaciones"
+                  id="specs"
                   placeholder="Engine, tank capacity, features…"
                   rows={3}
                 />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="permiso">Permit Number</Label>
-                  <Input id="permiso" placeholder="PERM-2024-XXXXX" />
+                  <Label htmlFor="permit">Permit Number</Label>
+                  <Input id="permit" placeholder="PERM-2024-XXXXX" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vigencia">Permit Expiry</Label>
-                  <Input id="vigencia" type="date" />
+                  <Label htmlFor="expiry">Permit Expiry</Label>
+                  <Input id="expiry" type="date" />
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
@@ -222,9 +222,9 @@ export default function UnidadesPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">
-                        {unit.marca} {unit.modelo}
+                        {unit.make} {unit.model}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{unit.anio}</p>
+                      <p className="text-sm text-muted-foreground">{unit.year}</p>
                     </div>
                   </div>
                   <DropdownMenu>
@@ -252,24 +252,24 @@ export default function UnidadesPage() {
 
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
-                    <span className="text-sm text-muted-foreground">Placas</span>
-                    <span className="text-sm font-semibold text-foreground">{unit.placas}</span>
+                    <span className="text-sm text-muted-foreground">Plates</span>
+                    <span className="text-sm font-semibold text-foreground">{unit.plates}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">{unit.usuario}</span>
+                    <span className="text-muted-foreground">{unit.driver}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
                     <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Permit: {unit.numeroPermiso}</span>
+                    <span className="text-muted-foreground">Permit: {unit.permitNumber}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                     <span className="text-muted-foreground">
-                      Expiry: {new Date(unit.vigenciaPermiso).toLocaleDateString("en-US")}
+                      Expiry: {new Date(unit.permitExpiry).toLocaleDateString("en-US")}
                     </span>
                   </div>
 
@@ -277,16 +277,16 @@ export default function UnidadesPage() {
                     <div className="flex items-center gap-1.5">
                       <Fuel className="h-4 w-4 text-primary" />
                       <span className="text-sm font-semibold text-foreground">
-                        ${unit.consumoMes.toLocaleString("en-US")}
+                        ${unit.monthlySpend.toLocaleString("en-US")}
                       </span>
-                      <span className="text-xs text-muted-foreground">/mes</span>
+                      <span className="text-xs text-muted-foreground">/mo</span>
                     </div>
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      unit.estado === "activo" 
+                      unit.status === "active" 
                         ? "bg-primary/10 text-primary" 
                         : "bg-muted text-muted-foreground"
                     }`}>
-                      {unit.estado === "activo" ? "Active" : "Inactive"}
+                      {unit.status === "active" ? "Active" : "Inactive"}
                     </span>
                   </div>
                 </div>

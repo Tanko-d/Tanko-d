@@ -4,14 +4,14 @@ import { stellarService } from '../services/stellar.service.js';
 import { z } from 'zod';
 
 const createRequestSchema = z.object({
-  conductorPublicKey: z.string().min(1),
+  driverPublicKey: z.string().min(1),
   amount: z.string().min(1),
   description: z.string().min(1),
 });
 
 const approveRequestSchema = z.object({
   requestId: z.string().uuid(),
-  jefeSecret: z.string().min(1),
+  managerSecret: z.string().min(1),
   createNewEscrow: z.boolean().optional().default(true),
 });
 
@@ -23,15 +23,15 @@ const rejectRequestSchema = z.object({
 export class FundsController {
   async createRequest(req: Request, res: Response): Promise<void> {
     try {
-      const { jefePublicKey } = req.body;
+      const { managerPublicKey } = req.body;
 
-      if (!jefePublicKey || typeof jefePublicKey !== 'string') {
-        res.status(400).json({ success: false, error: 'jefePublicKey is required' });
+      if (!managerPublicKey || typeof managerPublicKey !== 'string') {
+        res.status(400).json({ success: false, error: 'managerPublicKey is required' });
         return;
       }
 
-      if (!stellarService.validatePublicKey(jefePublicKey)) {
-        res.status(400).json({ success: false, error: 'Invalid jefe public key' });
+      if (!stellarService.validatePublicKey(managerPublicKey)) {
+        res.status(400).json({ success: false, error: 'Invalid manager public key' });
         return;
       }
 
@@ -46,12 +46,12 @@ export class FundsController {
       }
 
       const result = await fundsService.createRequest(
-        validation.data.conductorPublicKey,
+        validation.data.driverPublicKey,
         {
           amount: validation.data.amount,
           description: validation.data.description,
         },
-        jefePublicKey
+        managerPublicKey
       );
 
       if (result.success) {
@@ -69,15 +69,15 @@ export class FundsController {
 
   async approveRequest(req: Request, res: Response): Promise<void> {
     try {
-      const { jefePublicKey } = req.body;
+      const { managerPublicKey } = req.body;
 
-      if (!jefePublicKey || typeof jefePublicKey !== 'string') {
-        res.status(400).json({ success: false, error: 'jefePublicKey is required' });
+      if (!managerPublicKey || typeof managerPublicKey !== 'string') {
+        res.status(400).json({ success: false, error: 'managerPublicKey is required' });
         return;
       }
 
-      if (!stellarService.validatePublicKey(jefePublicKey)) {
-        res.status(400).json({ success: false, error: 'Invalid jefe public key' });
+      if (!stellarService.validatePublicKey(managerPublicKey)) {
+        res.status(400).json({ success: false, error: 'Invalid manager public key' });
         return;
       }
 
@@ -94,10 +94,10 @@ export class FundsController {
       const result = await fundsService.approveRequest(
         {
           requestId: validation.data.requestId,
-          jefeSecret: validation.data.jefeSecret,
+          managerSecret: validation.data.managerSecret,
           createNewEscrow: validation.data.createNewEscrow,
         },
-        jefePublicKey
+        managerPublicKey
       );
 
       if (result.success) {
@@ -115,19 +115,19 @@ export class FundsController {
 
   async releaseFunds(req: Request, res: Response): Promise<void> {
     try {
-      const { requestId, jefeSecret, jefePublicKey } = req.body;
+      const { requestId, managerSecret, managerPublicKey } = req.body;
 
-      if (!requestId || !jefeSecret || !jefePublicKey) {
-        res.status(400).json({ success: false, error: 'requestId, jefeSecret, and jefePublicKey are required' });
+      if (!requestId || !managerSecret || !managerPublicKey) {
+        res.status(400).json({ success: false, error: 'requestId, managerSecret, and managerPublicKey are required' });
         return;
       }
 
-      if (!stellarService.validatePublicKey(jefePublicKey)) {
-        res.status(400).json({ success: false, error: 'Invalid jefe public key' });
+      if (!stellarService.validatePublicKey(managerPublicKey)) {
+        res.status(400).json({ success: false, error: 'Invalid manager public key' });
         return;
       }
 
-      const result = await fundsService.releaseFunds(requestId, jefeSecret, jefePublicKey);
+      const result = await fundsService.releaseFunds(requestId, managerSecret, managerPublicKey);
 
       if (result.success) {
         res.status(200).json({
@@ -148,15 +148,15 @@ export class FundsController {
 
   async rejectRequest(req: Request, res: Response): Promise<void> {
     try {
-      const { jefePublicKey } = req.body;
+      const { managerPublicKey } = req.body;
 
-      if (!jefePublicKey || typeof jefePublicKey !== 'string') {
-        res.status(400).json({ success: false, error: 'jefePublicKey is required' });
+      if (!managerPublicKey || typeof managerPublicKey !== 'string') {
+        res.status(400).json({ success: false, error: 'managerPublicKey is required' });
         return;
       }
 
-      if (!stellarService.validatePublicKey(jefePublicKey)) {
-        res.status(400).json({ success: false, error: 'Invalid jefe public key' });
+      if (!stellarService.validatePublicKey(managerPublicKey)) {
+        res.status(400).json({ success: false, error: 'Invalid manager public key' });
         return;
       }
 
@@ -175,7 +175,7 @@ export class FundsController {
           requestId: validation.data.requestId,
           reason: validation.data.reason,
         },
-        jefePublicKey
+        managerPublicKey
       );
 
       if (result.success) {
@@ -217,19 +217,19 @@ export class FundsController {
 
   async getPendingRequests(req: Request, res: Response): Promise<void> {
     try {
-      const { jefePublicKey } = req.query;
+      const { managerPublicKey } = req.query;
 
-      if (typeof jefePublicKey !== 'string') {
-        res.status(400).json({ success: false, error: 'jefePublicKey query parameter is required' });
+      if (typeof managerPublicKey !== 'string') {
+        res.status(400).json({ success: false, error: 'managerPublicKey query parameter is required' });
         return;
       }
 
-      if (!stellarService.validatePublicKey(jefePublicKey)) {
-        res.status(400).json({ success: false, error: 'Invalid jefe public key' });
+      if (!stellarService.validatePublicKey(managerPublicKey)) {
+        res.status(400).json({ success: false, error: 'Invalid manager public key' });
         return;
       }
 
-      const result = fundsService.getPendingRequests(jefePublicKey);
+      const result = fundsService.getPendingRequests(managerPublicKey);
 
       res.status(200).json(result);
     } catch (error) {
@@ -240,7 +240,7 @@ export class FundsController {
     }
   }
 
-  async getRequestsByConductor(req: Request, res: Response): Promise<void> {
+  async getRequestsByDriver(req: Request, res: Response): Promise<void> {
     try {
       const { publicKey } = req.params;
 
@@ -254,7 +254,7 @@ export class FundsController {
         return;
       }
 
-      const result = fundsService.getRequestsByConductor(publicKey);
+      const result = fundsService.getRequestsByDriver(publicKey);
 
       res.status(200).json(result);
     } catch (error) {

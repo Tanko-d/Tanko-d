@@ -34,53 +34,53 @@ import { Label } from "@/components/ui/label"
 const users = [
   {
     id: 1,
-    nombre: "Juan Pérez García",
+    name: "Juan Pérez García",
     email: "juan.perez@empresa.com",
-    telefono: "+52 55 1234 5678",
-    unidades: 2,
-    consumoMes: 45000,
-    estado: "activo",
-    fechaRegistro: "2024-01-15"
+    phone: "+52 55 1234 5678",
+    units: 2,
+    monthlySpend: 45000,
+    status: "active",
+    joinedAt: "2024-01-15"
   },
   {
     id: 2,
-    nombre: "María García López",
+    name: "María García López",
     email: "maria.garcia@empresa.com",
-    telefono: "+52 55 2345 6789",
-    unidades: 1,
-    consumoMes: 32000,
-    estado: "activo",
-    fechaRegistro: "2024-02-20"
+    phone: "+52 55 2345 6789",
+    units: 1,
+    monthlySpend: 32000,
+    status: "active",
+    joinedAt: "2024-02-20"
   },
   {
     id: 3,
-    nombre: "Carlos López Martínez",
+    name: "Carlos López Martínez",
     email: "carlos.lopez@empresa.com",
-    telefono: "+52 55 3456 7890",
-    unidades: 3,
-    consumoMes: 78000,
-    estado: "activo",
-    fechaRegistro: "2024-01-08"
+    phone: "+52 55 3456 7890",
+    units: 3,
+    monthlySpend: 78000,
+    status: "active",
+    joinedAt: "2024-01-08"
   },
   {
     id: 4,
-    nombre: "Ana Martínez Rodríguez",
+    name: "Ana Martínez Rodríguez",
     email: "ana.martinez@empresa.com",
-    telefono: "+52 55 4567 8901",
-    unidades: 1,
-    consumoMes: 28000,
-    estado: "inactivo",
-    fechaRegistro: "2024-03-10"
+    phone: "+52 55 4567 8901",
+    units: 1,
+    monthlySpend: 28000,
+    status: "inactive",
+    joinedAt: "2024-03-10"
   },
   {
     id: 5,
-    nombre: "Roberto Sánchez Fernández",
+    name: "Roberto Sánchez Fernández",
     email: "roberto.sanchez@empresa.com",
-    telefono: "+52 55 5678 9012",
-    unidades: 2,
-    consumoMes: 52000,
-    estado: "activo",
-    fechaRegistro: "2024-02-05"
+    phone: "+52 55 5678 9012",
+    units: 2,
+    monthlySpend: 52000,
+    status: "active",
+    joinedAt: "2024-02-05"
   },
 ]
 
@@ -89,7 +89,7 @@ export default function UsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const filteredUsers = users.filter(user =>
-    user.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -117,16 +117,16 @@ export default function UsersPage() {
             </DialogHeader>
             <form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="nombre">Full name</Label>
-                <Input id="nombre" placeholder="e.g. Juan Pérez García" />
+                <Label htmlFor="fullName">Full name</Label>
+                <Input id="fullName" placeholder="e.g. Juan Pérez García" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" placeholder="email@example.com" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="telefono">Phone</Label>
-                <Input id="telefono" type="tel" placeholder="+52 55 1234 5678" />
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" type="tel" placeholder="+52 55 1234 5678" />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
@@ -181,12 +181,12 @@ export default function UsersPage() {
                     <td className="py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                          {user.nombre.split(" ").map(n => n[0]).slice(0, 2).join("")}
+                          {user.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
                         </div>
                         <div>
-                          <p className="font-medium text-foreground">{user.nombre}</p>
+                          <p className="font-medium text-foreground">{user.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            Joined: {new Date(user.fechaRegistro).toLocaleDateString("en-US")}
+                            Joined: {new Date(user.joinedAt).toLocaleDateString("en-US")}
                           </p>
                         </div>
                       </div>
@@ -199,28 +199,28 @@ export default function UsersPage() {
                         </p>
                         <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <Phone className="h-3.5 w-3.5" />
-                          {user.telefono}
+                          {user.phone}
                         </p>
                       </div>
                     </td>
                     <td className="py-4">
                       <div className="flex items-center gap-1.5">
                         <Car className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm text-foreground">{user.unidades}</span>
+                        <span className="text-sm text-foreground">{user.units}</span>
                       </div>
                     </td>
                     <td className="py-4">
                       <span className="text-sm font-semibold text-foreground">
-                        ${user.consumoMes.toLocaleString()}
+                        ${user.monthlySpend.toLocaleString()}
                       </span>
                     </td>
                     <td className="py-4">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        user.estado === "activo"
+                        user.status === "active"
                           ? "bg-primary/10 text-primary"
                           : "bg-muted text-muted-foreground"
                       }`}>
-                        {user.estado === "activo" ? "Active" : "Inactive"}
+                        {user.status === "active" ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td className="py-4 text-right">

@@ -5,239 +5,217 @@ export interface ExportOptions {
   sheetName?: string
 }
 
-export interface TransaccionExport {
+export interface TransactionExport {
   id: string
-  fecha: string
-  tipo: string
-  monto: number
+  date: string
+  type: string
+  amount: number
   fee: number
-  estado: string
+  status: string
   txHash: string
-  conductor: string
-  peticionId?: string
+  driver: string
+  requestId?: string
 }
 
-export interface PeticionExport {
+export interface RequestExport {
   id: string
-  fechaSolicitud: string
-  conductor: string
-  tipoCombustible: string
-  litros: number
-  montoSolicitado: number
-  montoAprobado: number | null
-  estado: string
-  ubicacion: string
-  motivo: string
+  requestDate: string
+  driver: string
+  fuelType: string
+  liters: number
+  requestedAmount: number
+  approvedAmount: number | null
+  status: string
+  location: string
+  reason: string
 }
 
-export interface ConductorExport {
+export interface DriverExport {
   id: string
-  nombre: string
+  name: string
   email: string
-  walletStellar: string
-  limiteCredito: number
-  totalPeticiones: number
-  peticionesPendientes: number
-  peticionesAprobadas: number
-  peticionesRechazadas: number
+  stellarWallet: string
+  creditLimit: number
+  totalRequests: number
+  pendingRequests: number
+  approvedRequests: number
+  rejectedRequests: number
 }
 
-export interface ReporteMensualExport {
-  periodo: string
-  empresa: string
-  totalFondos: number
-  totalLiberado: number
+export interface MonthlyReportExport {
+  period: string
+  company: string
+  totalFunds: number
+  totalReleased: number
   totalFees: number
-  numTransacciones: number
-  numPeticiones: number
-  numPeticionesAprobadas: number
-  numPeticionesRechazadas: number
-  conductorsActivos: number
+  numTransactions: number
+  numRequests: number
+  numApprovedRequests: number
+  numRejectedRequests: number
+  activeDrivers: number
 }
 
-/**
- * Genera un archivo Excel para transacciones
- */
-export function exportTransacciones(data: TransaccionExport[], options: ExportOptions): Buffer {
+export function exportTransactions(data: TransactionExport[], options: ExportOptions): Buffer {
   const workbook = XLSX.utils.book_new()
   
-  // Hoja principal de transacciones
   const wsData = [
-    ['ID', 'Fecha', 'Tipo', 'Monto (USDC)', 'Fee (USDC)', 'Estado', 'TX Hash', 'Conductor', 'Petición ID'],
+    ['ID', 'Date', 'Type', 'Amount (USDC)', 'Fee (USDC)', 'Status', 'TX Hash', 'Driver', 'Request ID'],
     ...data.map(t => [
       t.id,
-      t.fecha,
-      t.tipo,
-      t.monto,
+      t.date,
+      t.type,
+      t.amount,
       t.fee,
-      t.estado,
+      t.status,
       t.txHash || '-',
-      t.conductor,
-      t.peticionId || '-',
+      t.driver,
+      t.requestId || '-',
     ])
   ]
   
   const worksheet = XLSX.utils.aoa_to_sheet(wsData)
   
-  // Agregar resumen
-  const totalMonto = data.reduce((sum, t) => sum + t.monto, 0)
+  const totalAmount = data.reduce((sum, t) => sum + t.amount, 0)
   const totalFee = data.reduce((sum, t) => sum + t.fee, 0)
   
   XLSX.utils.sheet_add_aoa(worksheet, [
     [],
-    ['RESUMEN'],
-    ['Total Transacciones', data.length],
-    ['Monto Total', totalMonto],
-    ['Fee Total', totalFee],
-    ['Monto Neto', totalMonto - totalFee],
+    ['SUMMARY'],
+    ['Total Transactions', data.length],
+    ['Total Amount', totalAmount],
+    ['Total Fee', totalFee],
+    ['Net Amount', totalAmount - totalFee],
   ], { origin: -1 })
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Transacciones')
+  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Transactions')
   
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as unknown as Buffer
 }
 
-/**
- * Genera un archivo Excel para peticiones
- */
-export function exportPeticiones(data: PeticionExport[], options: ExportOptions): Buffer {
+export function exportRequests(data: RequestExport[], options: ExportOptions): Buffer {
   const workbook = XLSX.utils.book_new()
   
   const wsData = [
-    ['ID', 'Fecha Solicitud', 'Conductor', 'Tipo Combustible', 'Litros', 'Monto Solicitado', 'Monto Aprobado', 'Estado', 'Ubicación', 'Motivo'],
+    ['ID', 'Request Date', 'Driver', 'Fuel Type', 'Liters', 'Requested Amount', 'Approved Amount', 'Status', 'Location', 'Reason'],
     ...data.map(p => [
       p.id,
-      p.fechaSolicitud,
-      p.conductor,
-      p.tipoCombustible,
-      p.litros,
-      p.montoSolicitado,
-      p.montoAprobado || '-',
-      p.estado,
-      p.ubicacion,
-      p.motivo || '-',
+      p.requestDate,
+      p.driver,
+      p.fuelType,
+      p.liters,
+      p.requestedAmount,
+      p.approvedAmount || '-',
+      p.status,
+      p.location,
+      p.reason || '-',
     ])
   ]
   
   const worksheet = XLSX.utils.aoa_to_sheet(wsData)
   
-  // Resumen
-  const totalSolicitado = data.reduce((sum, p) => sum + p.montoSolicitado, 0)
-  const totalAprobado = data.reduce((sum, p) => sum + (p.montoAprobado || 0), 0)
-  const pendientes = data.filter(p => p.estado === 'PENDIENTE').length
-  const aprobadas = data.filter(p => p.estado === 'APROBADA' || p.estado === 'COMPLETADA').length
+  const totalRequested = data.reduce((sum, p) => sum + p.requestedAmount, 0)
+  const totalApproved = data.reduce((sum, p) => sum + (p.approvedAmount || 0), 0)
+  const pending = data.filter(p => p.status === 'PENDING').length
+  const approved = data.filter(p => p.status === 'APPROVED' || p.status === 'COMPLETED').length
   
   XLSX.utils.sheet_add_aoa(worksheet, [
     [],
-    ['RESUMEN'],
-    ['Total Peticiones', data.length],
-    ['Pendientes', pendientes],
-    ['Aprobadas/Completadas', aprobadas],
-    ['Total Solicitado', totalSolicitado],
-    ['Total Aprobado', totalAprobado],
+    ['SUMMARY'],
+    ['Total Requests', data.length],
+    ['Pending', pending],
+    ['Approved / Completed', approved],
+    ['Total Requested', totalRequested],
+    ['Total Approved', totalApproved],
   ], { origin: -1 })
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Peticiones')
+  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Requests')
   
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as unknown as Buffer
 }
 
-/**
- * Genera un archivo Excel para conductores
- */
-export function exportConductores(data: ConductorExport[], options: ExportOptions): Buffer {
+export function exportDrivers(data: DriverExport[], options: ExportOptions): Buffer {
   const workbook = XLSX.utils.book_new()
   
   const wsData = [
-    ['ID', 'Nombre', 'Email', 'Wallet Stellar', 'Límite Crédito', 'Total Peticiones', 'Pendientes', 'Aprobadas', 'Rechazadas'],
+    ['ID', 'Name', 'Email', 'Stellar Wallet', 'Credit Limit', 'Total Requests', 'Pending', 'Approved', 'Rejected'],
     ...data.map(c => [
       c.id,
-      c.nombre,
+      c.name,
       c.email,
-      c.walletStellar,
-      c.limiteCredito,
-      c.totalPeticiones,
-      c.peticionesPendientes,
-      c.peticionesAprobadas,
-      c.peticionesRechazadas,
+      c.stellarWallet,
+      c.creditLimit,
+      c.totalRequests,
+      c.pendingRequests,
+      c.approvedRequests,
+      c.rejectedRequests,
     ])
   ]
   
   const worksheet = XLSX.utils.aoa_to_sheet(wsData)
   
-  // Resumen
-  const totalCreditos = data.reduce((sum, c) => sum + c.limiteCredito, 0)
+  const totalCreditLimits = data.reduce((sum, c) => sum + c.creditLimit, 0)
   
   XLSX.utils.sheet_add_aoa(worksheet, [
     [],
-    ['RESUMEN'],
-    ['Total Conductores', data.length],
-    ['Límite Crédito Total', totalCreditos],
+    ['SUMMARY'],
+    ['Total Drivers', data.length],
+    ['Total Credit Limit', totalCreditLimits],
   ], { origin: -1 })
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Conductores')
+  XLSX.utils.book_append_sheet(workbook, worksheet, options.sheetName || 'Drivers')
   
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as unknown as Buffer
 }
 
-/**
- * Genera un reporte mensual completo
- */
-export function exportReporteMensual(data: ReporteMensualExport, transacciones: TransaccionExport[], peticiones: PeticionExport[]): Buffer {
+export function exportMonthlyReport(data: MonthlyReportExport, transactions: TransactionExport[], requests: RequestExport[]): Buffer {
   const workbook = XLSX.utils.book_new()
   
-  // Hoja de resumen
-  const resumenData = [
-    ['REPORTE MENSUAL - TANKO'],
-    ['Período', data.periodo],
-    ['Empresa', data.empresa],
+  const summaryData = [
+    ['MONTHLY REPORT - TANKO'],
+    ['Period', data.period],
+    ['Company', data.company],
     [],
-    ['RESUMEN FINANCIERO'],
-    ['Total Fondos en Escrow', data.totalFondos],
-    ['Total Liberado', data.totalLiberado],
+    ['FINANCIAL SUMMARY'],
+    ['Total Funds in Escrow', data.totalFunds],
+    ['Total Released', data.totalReleased],
     ['Total Fees', data.totalFees],
     [],
-    ['CONTADORES'],
-    ['Transacciones', data.numTransacciones],
-    ['Peticiones Totales', data.numPeticiones],
-    ['Peticiones Aprobadas', data.numPeticionesAprobadas],
-    ['Peticiones Rechazadas', data.numPeticionesRechazadas],
-    ['Conductores Activos', data.conductorsActivos],
+    ['COUNTERS'],
+    ['Transactions', data.numTransactions],
+    ['Total Requests', data.numRequests],
+    ['Approved Requests', data.numApprovedRequests],
+    ['Rejected Requests', data.numRejectedRequests],
+    ['Active Drivers', data.activeDrivers],
   ]
   
-  const resumenWs = XLSX.utils.aoa_to_sheet(resumenData)
-  XLSX.utils.book_append_sheet(workbook, resumenWs, 'Resumen')
+  const summaryWs = XLSX.utils.aoa_to_sheet(summaryData)
+  XLSX.utils.book_append_sheet(workbook, summaryWs, 'Summary')
   
-  // Hoja de transacciones
-  if (transacciones.length > 0) {
+  if (transactions.length > 0) {
     const txData = [
-      ['ID', 'Fecha', 'Tipo', 'Monto', 'Fee', 'Estado', 'TX Hash', 'Conductor'],
-      ...transacciones.map(t => [
-        t.id, t.fecha, t.tipo, t.monto, t.fee, t.estado, t.txHash || '-', t.conductor
+      ['ID', 'Date', 'Type', 'Amount', 'Fee', 'Status', 'TX Hash', 'Driver'],
+      ...transactions.map(t => [
+        t.id, t.date, t.type, t.amount, t.fee, t.status, t.txHash || '-', t.driver
       ])
     ]
     const txWs = XLSX.utils.aoa_to_sheet(txData)
-    XLSX.utils.book_append_sheet(workbook, txWs, 'Transacciones')
+    XLSX.utils.book_append_sheet(workbook, txWs, 'Transactions')
   }
   
-  // Hoja de peticiones
-  if (peticiones.length > 0) {
-    const petData = [
-      ['ID', 'Fecha', 'Conductor', 'Tipo', 'Litros', 'Monto', 'Estado', 'Ubicación'],
-      ...peticiones.map(p => [
-        p.id, p.fechaSolicitud, p.conductor, p.tipoCombustible, p.litros, p.montoSolicitado, p.estado, p.ubicacion
+  if (requests.length > 0) {
+    const reqData = [
+      ['ID', 'Date', 'Driver', 'Type', 'Liters', 'Amount', 'Status', 'Location'],
+      ...requests.map(p => [
+        p.id, p.requestDate, p.driver, p.fuelType, p.liters, p.requestedAmount, p.status, p.location
       ])
     ]
-    const petWs = XLSX.utils.aoa_to_sheet(petData)
-    XLSX.utils.book_append_sheet(workbook, petWs, 'Peticiones')
+    const reqWs = XLSX.utils.aoa_to_sheet(reqData)
+    XLSX.utils.book_append_sheet(workbook, reqWs, 'Requests')
   }
   
   return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as unknown as Buffer
 }
 
-/**
- * Genera un nombre de archivo con timestamp
- */
 export function generateFilename(prefix: string, extension: string = 'xlsx'): string {
   const now = new Date()
   const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19)
@@ -245,9 +223,9 @@ export function generateFilename(prefix: string, extension: string = 'xlsx'): st
 }
 
 export default {
-  exportTransacciones,
-  exportPeticiones,
-  exportConductores,
-  exportReporteMensual,
+  exportTransactions,
+  exportRequests,
+  exportDrivers,
+  exportMonthlyReport,
   generateFilename,
 }
