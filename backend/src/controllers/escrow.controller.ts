@@ -3,7 +3,6 @@ import { trustlessWorkService } from '../services/trustlessWork.service.js';
 import { stellarService } from '../services/stellar.service.js';
 import {
   createEscrowSchema,
-  createMultiReleaseEscrowSchema,
   fundEscrowSchema,
   approveMilestoneSchema,
   releaseFundsSchema,
@@ -20,17 +19,25 @@ export class EscrowController {
   async createSingleReleaseEscrow(req: Request, res: Response): Promise<void> {
     try {
       const data = createEscrowSchema.parse(req.body);
-      
+
       if (!stellarService.validatePublicKey(data.roles.sender)) {
         res.status(400).json({ success: false, error: 'Invalid sender address' });
         return;
       }
-      if (!stellarService.validatePublicKey(data.roles.approver)) {
-        res.status(400).json({ success: false, error: 'Invalid approver address' });
+      if (!stellarService.validatePublicKey(data.roles.serviceProvider)) {
+        res.status(400).json({ success: false, error: 'Invalid serviceProvider address' });
         return;
       }
-      if (!stellarService.validatePublicKey(data.roles.receiver)) {
-        res.status(400).json({ success: false, error: 'Invalid receiver address' });
+      if (!stellarService.validatePublicKey(data.roles.platformAddress)) {
+        res.status(400).json({ success: false, error: 'Invalid platformAddress' });
+        return;
+      }
+      if (!stellarService.validatePublicKey(data.roles.releaseSigner)) {
+        res.status(400).json({ success: false, error: 'Invalid releaseSigner address' });
+        return;
+      }
+      if (!stellarService.validatePublicKey(data.roles.disputeResolver)) {
+        res.status(400).json({ success: false, error: 'Invalid disputeResolver address' });
         return;
       }
 
@@ -48,18 +55,22 @@ export class EscrowController {
 
   async createMultiReleaseEscrow(req: Request, res: Response): Promise<void> {
     try {
-      const data = createMultiReleaseEscrowSchema.parse(req.body);
-      
-      if (!stellarService.validatePublicKey(data.roles.sender)) {
-        res.status(400).json({ success: false, error: 'Invalid sender address' });
+      const data = createEscrowSchema.parse(req.body);
+
+      if (!stellarService.validatePublicKey(data.roles.serviceProvider)) {
+        res.status(400).json({ success: false, error: 'Invalid serviceProvider address' });
         return;
       }
-      if (!stellarService.validatePublicKey(data.roles.approver)) {
-        res.status(400).json({ success: false, error: 'Invalid approver address' });
+      if (!stellarService.validatePublicKey(data.roles.platformAddress)) {
+        res.status(400).json({ success: false, error: 'Invalid platformAddress' });
         return;
       }
-      if (!stellarService.validatePublicKey(data.roles.receiver)) {
-        res.status(400).json({ success: false, error: 'Invalid receiver address' });
+      if (!stellarService.validatePublicKey(data.roles.releaseSigner)) {
+        res.status(400).json({ success: false, error: 'Invalid releaseSigner address' });
+        return;
+      }
+      if (!stellarService.validatePublicKey(data.roles.disputeResolver)) {
+        res.status(400).json({ success: false, error: 'Invalid disputeResolver address' });
         return;
       }
 

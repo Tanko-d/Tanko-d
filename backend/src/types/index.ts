@@ -1,33 +1,36 @@
 export interface Trustline {
   address: string;
-  decimals: number;
+  symbol: string;
 }
 
 export interface Roles {
   sender: string;
-  approver: string;
-  receiver: string;
+  serviceProvider: string;
+  platformAddress: string;
+  releaseSigner: string;
+  disputeResolver: string;
 }
 
-export interface Milestone {
+export interface EscrowMilestone {
   description: string;
-  status: 'pending' | 'approved' | 'released' | 'disputed';
+  amount: number;
 }
 
 export interface CreateEscrowPayload {
   signer: string;
   engagementId: string;
+  title: string;
   roles: Roles;
-  amount: string;
-  description: string;
+  amount: number;
+  platformFee: number;
+  milestones: EscrowMilestone[];
   trustline: Trustline;
-  receiverMemo?: string;
 }
 
 export interface FundEscrowPayload {
   contractId: string;
   signer: string;
-  role: 'sender' | 'approver' | 'receiver';
+  role: 'serviceProvider' | 'platformAddress' | 'releaseSigner' | 'disputeResolver';
   rolePublicKey: string;
   trustline: Trustline;
 }
@@ -46,12 +49,13 @@ export interface ReleaseFundsPayload {
 }
 
 export interface SendTransactionPayload {
-  xdr: string;
+  signedXdr: string;
 }
 
 export interface EscrowResponse {
-  contractId: string;
-  xdr: string;
+  contractId?: string;
+  unsignedTransaction?: string;
+  xdr?: string;
 }
 
 export interface TrustlessWorkResponse<T = unknown> {
@@ -65,7 +69,7 @@ export interface EscrowStatus {
   contractId: string;
   status: 'initialized' | 'funded' | 'approved' | 'released' | 'disputed';
   amount: string;
-  milestone?: Milestone;
+  milestone?: EscrowMilestone;
   createdAt: string;
   updatedAt: string;
 }

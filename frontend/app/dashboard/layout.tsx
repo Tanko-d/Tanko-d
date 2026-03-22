@@ -13,18 +13,16 @@ import {
   LogOut,
   Menu,
   X,
-  Truck,
 } from "lucide-react"
 import { useState } from "react"
 import { WalletButton } from "@/components/wallet/wallet-button"
 
 const navigation = [
-  { name: "Resumen", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Usuarios", href: "/dashboard/usuarios", icon: Users },
-  { name: "Unidades", href: "/dashboard/unidades", icon: Car },
-  { name: "Consumos", href: "/dashboard/consumos", icon: Receipt },
-  { name: "Ubicaciones", href: "/dashboard/ubicaciones", icon: MapPin },
-  { name: "Conductor", href: "/dashboard/conductor", icon: Truck },
+  { name: "Overview",   href: "/dashboard",           icon: LayoutDashboard },
+  { name: "Users",      href: "/dashboard/usuarios",  icon: Users },
+  { name: "Fleet",      href: "/dashboard/unidades",  icon: Car },
+  { name: "Fuel Logs",  href: "/dashboard/consumos",  icon: Receipt },
+  { name: "Locations",  href: "/dashboard/ubicaciones", icon: MapPin },
 ]
 
 export default function DashboardLayout({
@@ -57,7 +55,7 @@ export default function DashboardLayout({
           style={{ borderBottomColor: "rgba(255,255,255,0.08)" }}
           className="flex h-16 items-center justify-between border-b px-5"
         >
-          <Link href="/" className="flex items-center gap-2.5">
+          <Link href="/menu" className="flex items-center gap-2.5">
             <Image
               src="/tanko-logo.png"
               alt="TANKO"
@@ -107,14 +105,14 @@ export default function DashboardLayout({
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/10 hover:text-white transition-colors"
           >
             <Settings className="h-5 w-5" />
-            Configuración
+            Settings
           </Link>
           <Link
             href="/"
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/10 hover:text-white transition-colors"
           >
             <LogOut className="h-5 w-5" />
-            Cerrar Sesión
+            Disconnect
           </Link>
         </div>
       </aside>

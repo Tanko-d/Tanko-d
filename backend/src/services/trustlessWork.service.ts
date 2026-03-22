@@ -28,7 +28,7 @@ export class TrustlessWorkService {
       timeout: 60000,
       headers: {
         'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+        'x-api-key': this.apiKey,
       },
     });
   }
@@ -184,9 +184,8 @@ export class TrustlessWorkService {
       return this.handleError(error);
     }
   }
-
   async getEscrowsByRole(
-    role: 'sender' | 'approver' | 'receiver',
+    role: string,
     publicKey: string
   ): Promise<TrustlessWorkResponse<EscrowStatus[]>> {
     try {
@@ -240,7 +239,7 @@ export class TrustlessWorkService {
     contractId: string,
     signer: string,
     rolePublicKey: string,
-    resolver: 'sender' | 'approver' | 'receiver',
+    resolver: 'serviceProvider' | 'platformAddress' | 'releaseSigner' | 'disputeResolver',
     percentage: number
   ): Promise<TrustlessWorkResponse<{ xdr: string }>> {
     try {

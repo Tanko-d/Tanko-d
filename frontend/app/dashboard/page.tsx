@@ -26,44 +26,44 @@ import {
 
 const stats = [
   {
-    title: "Total Consumido",
+    title: "Total Spent",
     value: "$1,234,567",
     change: "+12.5%",
     trend: "up",
     icon: Fuel,
-    description: "Este mes"
+    description: "This month"
   },
   {
-    title: "Usuarios Activos",
+    title: "Active Users",
     value: "248",
     change: "+8",
     trend: "up",
     icon: Users,
-    description: "Nuevos este mes"
+    description: "New this month"
   },
   {
-    title: "Unidades Registradas",
+    title: "Registered Units",
     value: "312",
     change: "+15",
     trend: "up",
     icon: Car,
-    description: "Total activas"
+    description: "Total active"
   },
   {
-    title: "Litros Cargados",
+    title: "Liters Loaded",
     value: "45,678",
     change: "-2.3%",
     trend: "down",
     icon: TrendingUp,
-    description: "Este mes"
+    description: "This month"
   },
 ]
 
 const consumptionData = [
-  { mes: "Ene", consumo: 85000, litros: 3200 },
+  { mes: "Jan", consumo: 85000, litros: 3200 },
   { mes: "Feb", consumo: 92000, litros: 3450 },
   { mes: "Mar", consumo: 78000, litros: 2980 },
-  { mes: "Abr", consumo: 105000, litros: 4100 },
+  { mes: "Apr", consumo: 105000, litros: 4100 },
   { mes: "May", consumo: 112000, litros: 4350 },
   { mes: "Jun", consumo: 98000, litros: 3800 },
 ]
@@ -74,50 +74,50 @@ const recentTransactions = [
     usuario: "Juan Pérez",
     unidad: "Kenworth T680",
     placas: "ABC-123-D",
-    ubicacion: "Gasolinera Central CDMX",
+    ubicacion: "Central CDMX Station",
     monto: 4500,
     litros: 180,
-    fecha: "Hoy, 10:32 AM"
+    fecha: "Today, 10:32 AM"
   },
   {
     id: 2,
     usuario: "María García",
     unidad: "Freightliner Cascadia",
     placas: "DEF-456-E",
-    ubicacion: "Estación Reforma",
+    ubicacion: "Reforma Station",
     monto: 3200,
     litros: 128,
-    fecha: "Hoy, 09:15 AM"
+    fecha: "Today, 09:15 AM"
   },
   {
     id: 3,
     usuario: "Carlos López",
     unidad: "Volvo VNL",
     placas: "GHI-789-F",
-    ubicacion: "Gasolinera Norte",
+    ubicacion: "North Station",
     monto: 5100,
     litros: 204,
-    fecha: "Ayer, 06:45 PM"
+    fecha: "Yesterday, 06:45 PM"
   },
   {
     id: 4,
     usuario: "Ana Martínez",
     unidad: "International LT",
     placas: "JKL-012-G",
-    ubicacion: "Estación Sur Express",
+    ubicacion: "South Express Station",
     monto: 2800,
     litros: 112,
-    fecha: "Ayer, 03:20 PM"
+    fecha: "Yesterday, 03:20 PM"
   },
   {
     id: 5,
     usuario: "Roberto Sánchez",
     unidad: "Peterbilt 579",
     placas: "MNO-345-H",
-    ubicacion: "Gasolinera Oriente",
+    ubicacion: "East Station",
     monto: 4200,
     litros: 168,
-    fecha: "Ayer, 11:00 AM"
+    fecha: "Yesterday, 11:00 AM"
   },
 ]
 
@@ -133,8 +133,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Resumen General</h1>
-        <p className="text-muted-foreground">Vista general del uso del monedero electrónico</p>
+        <h1 className="text-2xl font-bold text-foreground">Overview</h1>
+        <p className="text-muted-foreground">Fleet fuel wallet — general usage summary</p>
       </div>
 
       {/* Stats cards */}
@@ -171,8 +171,8 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Consumo Mensual</CardTitle>
-            <CardDescription>Consumo en pesos de los últimos 6 meses</CardDescription>
+            <CardTitle>Monthly Spend</CardTitle>
+            <CardDescription>Fuel spend (USD) over the last 6 months</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -190,7 +190,7 @@ export default function DashboardPage() {
                     tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
                   />
                   <Tooltip 
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, "Consumo"]}
+                    formatter={(value: number) => [`$${value.toLocaleString("en-US")}`, "Spend"]}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
@@ -212,8 +212,8 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Litros por Mes</CardTitle>
-            <CardDescription>Litros de combustible cargados</CardDescription>
+            <CardTitle>Liters per Month</CardTitle>
+            <CardDescription>Fuel volume loaded per month</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                     tick={{ fill: 'currentColor' }}
                   />
                   <Tooltip 
-                    formatter={(value: number) => [`${value.toLocaleString()} L`, "Litros"]}
+                    formatter={(value: number) => [`${value.toLocaleString("en-US")} L`, "Liters"]}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
@@ -253,8 +253,8 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Transacciones Recientes</CardTitle>
-            <CardDescription>Últimas cargas de combustible registradas</CardDescription>
+            <CardTitle>Recent Transactions</CardTitle>
+            <CardDescription>Latest fuel loads registered</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -273,7 +273,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-foreground">${tx.monto.toLocaleString()}</p>
+                    <p className="text-sm font-semibold text-foreground">${tx.monto.toLocaleString("en-US")}</p>
                     <p className="text-xs text-muted-foreground">{tx.litros} L</p>
                   </div>
                 </div>
@@ -284,8 +284,8 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Unidades con Mayor Consumo</CardTitle>
-            <CardDescription>Top 5 unidades por consumo este mes</CardDescription>
+            <CardTitle>Top Consuming Units</CardTitle>
+            <CardDescription>Top 5 units by fuel spend this month</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -304,8 +304,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-foreground">${unit.consumo.toLocaleString()}</p>
-                    <p className="text-xs text-muted-foreground">{unit.litros.toLocaleString()} L</p>
+                    <p className="text-sm font-semibold text-foreground">${unit.consumo.toLocaleString("en-US")}</p>
+                    <p className="text-xs text-muted-foreground">{unit.litros.toLocaleString("en-US")} L</p>
                   </div>
                 </div>
               ))}

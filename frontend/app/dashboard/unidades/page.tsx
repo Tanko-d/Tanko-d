@@ -42,7 +42,7 @@ const units = [
     anio: 2023,
     placas: "ABC-123-D",
     usuario: "Juan Pérez García",
-    especificaciones: "Motor Cummins X15, 500 HP, Tanque 300 galones",
+    especificaciones: "Cummins X15 engine, 500 HP, 300-gal tank",
     numeroPermiso: "PERM-2024-12345",
     vigenciaPermiso: "2025-06-15",
     consumoMes: 25000,
@@ -55,7 +55,7 @@ const units = [
     anio: 2022,
     placas: "DEF-456-E",
     usuario: "María García López",
-    especificaciones: "Motor Detroit DD15, 475 HP, Tanque 280 galones",
+    especificaciones: "Detroit DD15 engine, 475 HP, 280-gal tank",
     numeroPermiso: "PERM-2024-23456",
     vigenciaPermiso: "2025-08-20",
     consumoMes: 32000,
@@ -68,7 +68,7 @@ const units = [
     anio: 2024,
     placas: "GHI-789-F",
     usuario: "Carlos López Martínez",
-    especificaciones: "Motor Volvo D13, 455 HP, Tanque 320 galones",
+    especificaciones: "Volvo D13 engine, 455 HP, 320-gal tank",
     numeroPermiso: "PERM-2024-34567",
     vigenciaPermiso: "2025-12-10",
     consumoMes: 28000,
@@ -81,7 +81,7 @@ const units = [
     anio: 2021,
     placas: "JKL-012-G",
     usuario: "Ana Martínez Rodríguez",
-    especificaciones: "Motor Cummins X15, 450 HP, Tanque 260 galones",
+    especificaciones: "Cummins X15 engine, 450 HP, 260-gal tank",
     numeroPermiso: "PERM-2024-45678",
     vigenciaPermiso: "2024-03-25",
     consumoMes: 18000,
@@ -94,7 +94,7 @@ const units = [
     anio: 2023,
     placas: "MNO-345-H",
     usuario: "Roberto Sánchez Fernández",
-    especificaciones: "Motor PACCAR MX-13, 510 HP, Tanque 290 galones",
+    especificaciones: "PACCAR MX-13 engine, 510 HP, 290-gal tank",
     numeroPermiso: "PERM-2024-56789",
     vigenciaPermiso: "2025-09-30",
     consumoMes: 35000,
@@ -117,72 +117,72 @@ export default function UnidadesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Unidades</h1>
-          <p className="text-muted-foreground">Gestiona las unidades registradas en el sistema</p>
+          <h1 className="text-2xl font-bold text-foreground">Fleet</h1>
+          <p className="text-muted-foreground">Manage registered vehicles in the system</p>
         </div>
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Agregar Unidad
+              Add Vehicle
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>Agregar Nueva Unidad</DialogTitle>
+              <DialogTitle>Add New Vehicle</DialogTitle>
               <DialogDescription>
-                Ingresa los datos de la nueva unidad
+                Enter the details of the new vehicle
               </DialogDescription>
             </DialogHeader>
             <form className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="marca">Marca</Label>
-                  <Input id="marca" placeholder="Ej. Kenworth" />
+                  <Label htmlFor="marca">Make</Label>
+                  <Input id="marca" placeholder="e.g. Kenworth" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modelo">Modelo</Label>
-                  <Input id="modelo" placeholder="Ej. T680" />
+                  <Label htmlFor="modelo">Model</Label>
+                  <Input id="modelo" placeholder="e.g. T680" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="anio">Año</Label>
-                  <Input id="anio" type="number" placeholder="Ej. 2023" />
+                  <Label htmlFor="anio">Year</Label>
+                  <Input id="anio" type="number" placeholder="e.g. 2023" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="placas">Placas</Label>
-                  <Input id="placas" placeholder="Ej. ABC-123-D" />
+                  <Label htmlFor="placas">Plates</Label>
+                  <Input id="placas" placeholder="e.g. ABC-123-D" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="especificaciones">Especificaciones</Label>
-                <Textarea 
-                  id="especificaciones" 
-                  placeholder="Motor, capacidad del tanque, características..."
+                <Label htmlFor="especificaciones">Specifications</Label>
+                <Textarea
+                  id="especificaciones"
+                  placeholder="Engine, tank capacity, features…"
                   rows={3}
                 />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="permiso">Número de Permiso</Label>
+                  <Label htmlFor="permiso">Permit Number</Label>
                   <Input id="permiso" placeholder="PERM-2024-XXXXX" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vigencia">Vigencia del Permiso</Label>
+                  <Label htmlFor="vigencia">Permit Expiry</Label>
                   <Input id="vigencia" type="date" />
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancelar
+                  Cancel
                 </Button>
                 <Button type="submit" onClick={(e) => {
                   e.preventDefault()
                   setIsDialogOpen(false)
                 }}>
-                  Guardar Unidad
+                  Save Vehicle
                 </Button>
               </div>
             </form>
@@ -194,17 +194,17 @@ export default function UnidadesPage() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Lista de Unidades</CardTitle>
-              <CardDescription>Total: {units.length} unidades registradas</CardDescription>
+              <CardTitle>Vehicle List</CardTitle>
+              <CardDescription>Total: {units.length} vehicles registered</CardDescription>
             </div>
             <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar unidad..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+                <Input
+                  placeholder="Search vehicle…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
             </div>
           </div>
         </CardHeader>
@@ -236,15 +236,15 @@ export default function UnidadesPage() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem>
                         <Eye className="mr-2 h-4 w-4" />
-                        Ver detalles
+                        View details
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <Edit className="mr-2 h-4 w-4" />
-                        Editar
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Eliminar
+                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -263,13 +263,13 @@ export default function UnidadesPage() {
 
                   <div className="flex items-center gap-2 text-sm">
                     <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Permiso: {unit.numeroPermiso}</span>
+                    <span className="text-muted-foreground">Permit: {unit.numeroPermiso}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                     <span className="text-muted-foreground">
-                      Vigencia: {new Date(unit.vigenciaPermiso).toLocaleDateString("es-MX")}
+                      Expiry: {new Date(unit.vigenciaPermiso).toLocaleDateString("en-US")}
                     </span>
                   </div>
 
@@ -277,7 +277,7 @@ export default function UnidadesPage() {
                     <div className="flex items-center gap-1.5">
                       <Fuel className="h-4 w-4 text-primary" />
                       <span className="text-sm font-semibold text-foreground">
-                        ${unit.consumoMes.toLocaleString()}
+                        ${unit.consumoMes.toLocaleString("en-US")}
                       </span>
                       <span className="text-xs text-muted-foreground">/mes</span>
                     </div>
@@ -286,7 +286,7 @@ export default function UnidadesPage() {
                         ? "bg-primary/10 text-primary" 
                         : "bg-muted text-muted-foreground"
                     }`}>
-                      {unit.estado === "activo" ? "Activo" : "Inactivo"}
+                      {unit.estado === "activo" ? "Active" : "Inactive"}
                     </span>
                   </div>
                 </div>

@@ -31,7 +31,7 @@ export function WalletButton({ className }: WalletButtonProps) {
     if (!address) return
     await navigator.clipboard.writeText(address)
     setCopied(true)
-    toast.success('Dirección copiada')
+    toast.success('Address copied')
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -60,7 +60,7 @@ export function WalletButton({ className }: WalletButtonProps) {
           <div className="absolute right-0 top-full mt-2 w-72 rounded-xl border border-border bg-card p-3 shadow-xl z-50">
             {/* Full address */}
             <div className="mb-3 rounded-lg bg-muted/50 p-3">
-              <p className="text-xs font-medium text-muted-foreground mb-1">Wallet conectada (Freighter)</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">Connected wallet (Freighter)</p>
               <p className="font-mono text-xs text-foreground break-all leading-relaxed">{address}</p>
             </div>
 
@@ -70,7 +70,7 @@ export function WalletButton({ className }: WalletButtonProps) {
                 className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 {copied ? <CheckCheck className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
-                {copied ? 'Copiado' : 'Copiar dirección'}
+                {copied ? 'Copied!' : 'Copy address'}
               </button>
               <a
                 href={`https://stellar.expert/explorer/testnet/account/${address}`}
@@ -79,14 +79,14 @@ export function WalletButton({ className }: WalletButtonProps) {
                 className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
               >
                 <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                Ver en Stellar Explorer
+                View on Stellar Explorer
               </a>
               <button
                 onClick={() => { disconnect(); setOpen(false) }}
                 className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
               >
                 <LogOut className="h-4 w-4" />
-                Desconectar
+                Disconnect
               </button>
             </div>
           </div>
@@ -105,9 +105,9 @@ export function WalletButton({ className }: WalletButtonProps) {
       style={{ background: '#F58220' }}
     >
       {isConnecting ? (
-        <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Conectando…</>
+        <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Connecting…</>
       ) : (
-        <><Wallet className="mr-2 h-4 w-4" />Conectar Wallet</>
+        <><Wallet className="mr-2 h-4 w-4" />Connect Wallet</>
       )}
     </Button>
   )

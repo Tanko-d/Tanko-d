@@ -81,7 +81,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           ...prev,
           isConnecting: false,
           freighterInstalled: false,
-          error: 'Freighter no está instalado. Instálalo en freighter.app y recarga la página.',
+          error: 'Freighter is not installed. Install it at freighter.app and reload the page.',
         }))
         return
       }
@@ -93,7 +93,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setState(prev => ({
           ...prev,
           isConnecting: false,
-          error: `Freighter rechazó el acceso: ${error}`,
+          error: `Freighter denied access: ${error}`,
         }))
         return
       }
@@ -107,13 +107,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           error: null,
           freighterInstalled: true,
         })
-        console.log(`[Tanko] ✅ Freighter conectado: ${address}`)
+        console.log(`[Tanko] ✅ Freighter connected: ${address}`)
       }
     } catch (err: any) {
       setState(prev => ({
         ...prev,
         isConnecting: false,
-        error: err?.message || 'Error al conectar. Verifica que Freighter esté desbloqueado.',
+        error: err?.message || 'Connection error. Make sure Freighter is unlocked.',
       }))
     }
   }
@@ -127,7 +127,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       isConnecting: false,
       error: null,
     }))
-    console.log('[Tanko] Wallet desconectada')
+    console.log('[Tanko] Wallet disconnected')
   }
 
   return (

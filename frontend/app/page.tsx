@@ -25,7 +25,7 @@ export default function HomePage() {
         <div className="text-center">
           <h1 className="text-5xl font-bold text-white tracking-tight">TANKO</h1>
           <p className="mt-2 text-base text-white/50">
-            Sistema descentralizado de gestión de combustible
+            Decentralized fuel management for transport fleets
           </p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-xs font-medium uppercase tracking-widest text-white/40 mb-2">
-                Wallet conectada
+                Wallet connected
               </p>
               <p className="font-mono text-sm text-white/90 break-all">
                 {address.slice(0, 16)}…{address.slice(-16)}
@@ -53,7 +53,7 @@ export default function HomePage() {
                 style={{ background: '#F58220' }}
                 onClick={() => router.push('/dashboard')}
               >
-                Entrar al Dashboard →
+                Go to Dashboard →
               </Button>
               <Button
                 variant="ghost"
@@ -61,7 +61,7 @@ export default function HomePage() {
                 className="text-white/30 hover:text-white/50"
                 onClick={disconnect}
               >
-                Desconectar
+                Disconnect
               </Button>
             </div>
           </div>
@@ -75,9 +75,9 @@ export default function HomePage() {
               <Wallet className="h-8 w-8" style={{ color: '#F58220' }} />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-white">Conecta tu Freighter</h2>
+              <h2 className="text-xl font-semibold text-white">Connect your Freighter</h2>
               <p className="mt-1 text-sm text-white/45">
-                Usa la extensión de Freighter para acceder a Tanko
+                Use the Freighter extension to access Tanko
               </p>
             </div>
 
@@ -96,9 +96,9 @@ export default function HomePage() {
               onClick={connect}
             >
               {isConnecting ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Conectando…</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Connecting…</>
               ) : (
-                <><Wallet className="mr-2 h-4 w-4" />Conectar con Freighter</>
+                <><Wallet className="mr-2 h-4 w-4" />Connect with Freighter</>
               )}
             </Button>
 
@@ -108,7 +108,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-xs text-white/35 hover:text-white/55 transition-colors"
             >
-              ¿No tienes Freighter? Instálala aquí
+              Don't have Freighter? Install it here
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
@@ -116,7 +116,7 @@ export default function HomePage() {
       </div>
 
       <p className="mt-10 text-xs text-white/20">
-        Stellar Testnet · Trustless Work · Hack+ Alebrije CDMX 2026
+        Stellar Testnet · Trustless Work · Hack+ Alebrije CDMX 2026 🚛
       </p>
     </div>
   )

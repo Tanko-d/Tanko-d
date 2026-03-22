@@ -84,7 +84,7 @@ const users = [
   },
 ]
 
-export default function UsuariosPage() {
+export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -97,46 +97,46 @@ export default function UsuariosPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
-          <p className="text-muted-foreground">Gestiona los usuarios del monedero electrónico</p>
+          <h1 className="text-2xl font-bold text-foreground">Users</h1>
+          <p className="text-muted-foreground">Manage drivers and fleet wallet users</p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Agregar Usuario
+              Add User
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
+              <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>
-                Ingresa los datos del nuevo usuario del monedero
+                Enter the details of the new wallet user
               </DialogDescription>
             </DialogHeader>
             <form className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="nombre">Nombre completo</Label>
-                <Input id="nombre" placeholder="Ej. Juan Pérez García" />
+                <Label htmlFor="nombre">Full name</Label>
+                <Input id="nombre" placeholder="e.g. Juan Pérez García" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Correo electrónico</Label>
-                <Input id="email" type="email" placeholder="correo@ejemplo.com" />
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="email@example.com" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="telefono">Teléfono</Label>
+                <Label htmlFor="telefono">Phone</Label>
                 <Input id="telefono" type="tel" placeholder="+52 55 1234 5678" />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancelar
+                  Cancel
                 </Button>
                 <Button type="submit" onClick={(e) => {
                   e.preventDefault()
                   setIsDialogOpen(false)
                 }}>
-                  Guardar Usuario
+                  Save User
                 </Button>
               </div>
             </form>
@@ -148,13 +148,13 @@ export default function UsuariosPage() {
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Lista de Usuarios</CardTitle>
-              <CardDescription>Total: {users.length} usuarios registrados</CardDescription>
+              <CardTitle>User List</CardTitle>
+              <CardDescription>Total: {users.length} users registered</CardDescription>
             </div>
             <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Buscar usuario..."
+                placeholder="Search user…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -167,12 +167,12 @@ export default function UsuariosPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Usuario</th>
-                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Contacto</th>
-                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Unidades</th>
-                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Consumo Mes</th>
-                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Estado</th>
-                  <th className="pb-3 text-right text-sm font-medium text-muted-foreground">Acciones</th>
+                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">User</th>
+                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Contact</th>
+                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Units</th>
+                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Monthly Spend</th>
+                  <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Status</th>
+                  <th className="pb-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -186,7 +186,7 @@ export default function UsuariosPage() {
                         <div>
                           <p className="font-medium text-foreground">{user.nombre}</p>
                           <p className="text-xs text-muted-foreground">
-                            Registrado: {new Date(user.fechaRegistro).toLocaleDateString("es-MX")}
+                            Joined: {new Date(user.fechaRegistro).toLocaleDateString("en-US")}
                           </p>
                         </div>
                       </div>
@@ -216,11 +216,11 @@ export default function UsuariosPage() {
                     </td>
                     <td className="py-4">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        user.estado === "activo" 
-                          ? "bg-primary/10 text-primary" 
+                        user.estado === "activo"
+                          ? "bg-primary/10 text-primary"
                           : "bg-muted text-muted-foreground"
                       }`}>
-                        {user.estado === "activo" ? "Activo" : "Inactivo"}
+                        {user.estado === "activo" ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td className="py-4 text-right">
@@ -233,15 +233,15 @@ export default function UsuariosPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
                             <Eye className="mr-2 h-4 w-4" />
-                            Ver detalles
+                            View details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Edit className="mr-2 h-4 w-4" />
-                            Editar
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive">
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Eliminar
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
