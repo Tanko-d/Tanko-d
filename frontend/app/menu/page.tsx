@@ -1,379 +1,377 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   Fuel,
-  ShieldCheck,
-  Zap,
-  Globe,
   ArrowRight,
-  CheckCircle2,
-  Truck,
-  Building2,
-  BadgeCheck,
-  Lock,
+  Percent,
+  MapPin,
+  Shield,
+  BarChart3,
+  Handshake,
+  Route,
+  Calendar,
+  Glasses,
   TrendingUp,
-  Wallet,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/providers/auth-provider'
+import { Card, CardContent } from '@/components/ui/card'
+import { ScheduleModal } from '@/components/schedule-modal'
+
+const STATS = [
+  { value: '3%', label: 'Fee', description: 'Lowest in market' },
+  { value: '+5,000', label: 'Active Vehicles', description: 'Fleets managed' },
+  { value: '24/7', label: 'Technical Support', description: 'Always available' },
+  { value: '99.9%', label: 'Uptime', description: 'System reliability' },
+]
 
 const FEATURES = [
   {
-    icon: Lock,
-    title: 'Smart Escrow',
+    icon: Percent,
+    title: '3% Fee',
+    subtitle: 'Lowest in market',
     description:
-      'Every fuel authorization is backed by a Trustless Work escrow on Stellar. Funds are locked until the load is confirmed — no more cash advances.',
+      'Save significantly on every transaction. Our 3% fee is unbeatable compared to competitors charging up to 8%.',
+    highlight: '3%',
+    highlightLabel: 'fee',
   },
   {
-    icon: Zap,
-    title: 'Instant Settlement',
+    icon: MapPin,
+    title: 'Real-Time Tracking',
+    subtitle: 'GPS integrated',
     description:
-      'Once the manager approves, drivers receive funds in seconds directly to their Stellar wallet, anywhere in the country.',
+      'Monitor every fuel load in real time. Know exactly where, when, and how much fuel is loaded on each vehicle.',
+    highlight: '24/7',
+    highlightLabel: 'tracking',
   },
   {
-    icon: ShieldCheck,
-    title: 'Tamper-Proof Records',
+    icon: Shield,
+    title: 'Advanced Security',
+    subtitle: 'Total protection',
     description:
-      'Every transaction is recorded on-chain. Audits, disputes, and compliance reports are generated automatically.',
+      'Bank-level encryption, two-factor authentication, and instant alerts for any suspicious activity.',
+    highlight: '100%',
+    highlightLabel: 'secure',
   },
   {
-    icon: TrendingUp,
-    title: 'Real-Time Control',
+    icon: BarChart3,
+    title: 'Smart Reports',
+    subtitle: 'Valuable insights',
     description:
-      'Fleet managers see the entire operation live — liters, units, locations, and spend — in one dashboard.',
-  },
-]
-
-const HOW_IT_WORKS = [
-  {
-    step: '01',
-    actor: 'Fleet Manager',
-    icon: Building2,
-    title: 'Authorize a Fuel Load',
-    description:
-      'The manager logs a fuel request in the dashboard and creates an escrow contract that locks the exact amount needed.',
+      'Access detailed reports instantly. Analyze consumption patterns, optimize routes, and reduce operational costs.',
+    highlight: 'Instant',
+    highlightLabel: 'reports',
   },
   {
-    step: '02',
-    actor: 'Blockchain',
-    icon: BadgeCheck,
-    title: 'Escrow is Created',
+    icon: Handshake,
+    title: 'Strategic Partnerships',
+    subtitle: 'Premium station network',
     description:
-      'Trustless Work deploys a smart contract on Stellar Testnet. The funds are held securely until the conditions are met.',
+      'Partnered with the best service stations nationwide to guarantee coverage and certified fuel quality.',
+    highlight: '+500',
+    highlightLabel: 'stations',
   },
   {
-    step: '03',
-    actor: 'Driver',
-    icon: Truck,
-    title: 'Driver Loads Fuel',
+    icon: Route,
+    title: 'Full Traceability',
+    subtitle: 'Complete control',
     description:
-      'The driver loads the fuel at the station. The transaction is linked to the escrow and visible to the manager.',
-  },
-  {
-    step: '04',
-    actor: 'Fleet Manager',
-    icon: CheckCircle2,
-    title: 'Funds Released',
-    description:
-      'The manager approves and releases the escrow. Funds land in the driver\'s wallet instantly. No cash, no risk.',
+      'Track every liter of fuel from purchase to consumption. Detailed history, simplified audits, and total transparency.',
+    highlight: '100%',
+    highlightLabel: 'traceable',
   },
 ]
 
 export default function MenuPage() {
-  const { isConnected, role } = useAuth()
   const router = useRouter()
 
-  const handleCTA = () => {
-    if (isConnected && role) {
-      router.push(role === 'CONDUCTOR' ? '/dashboard/conductor' : '/dashboard')
-    } else {
-      router.push('/connect')
-    }
-  }
-
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{ background: 'linear-gradient(160deg, #0a1628 0%, #0F1E35 40%, #0d1f3c 100%)' }}
-    >
-      {/* ── Nav ── */}
-      <header className="sticky top-0 z-50 border-b border-white/5 backdrop-blur-md bg-[#0F1E35]/80">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
-              style={{ background: 'linear-gradient(135deg, #F58220, #e06b10)' }}
-            >
-              <Fuel className="h-4 w-4 text-white" />
+    <main className="min-h-screen">
+      {/* Header */}
+      <Header router={router} />
+
+      {/* Hero Section */}
+      <HeroSection router={router} />
+
+      {/* Stats Section */}
+      <StatsSection />
+
+      {/* Features Section */}
+      <FeaturesSection />
+
+      {/* CTA Section */}
+      <CTASection />
+
+      {/* Footer */}
+      <Footer />
+    </main>
+  )
+}
+
+function Header({ router }: { router: ReturnType<typeof useRouter> }) {
+  return (
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <Fuel className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold tracking-tight">TANKO</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/50">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-            <a href="#for-whom" className="hover:text-white transition-colors">For whom</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Button
-              size="sm"
-              className="font-semibold text-white"
-              style={{ background: '#F58220' }}
-              onClick={() => router.push('/connect')}
+            <span className="text-xl font-bold text-foreground tracking-tight">
+              TANKO
+            </span>
+          </button>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <a
+              href="#features"
+              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
-              <Wallet className="mr-1 h-3.5 w-3.5" />Connect wallet
+              Features
+            </a>
+            <a
+              href="#pricing"
+              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              Pricing
+            </a>
+            <a
+              href="#support"
+              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              Support
+            </a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <ScheduleModal>
+              <Button variant="outline" size="sm">
+                <Calendar className="mr-2 h-4 w-4" />
+                Schedule Demo
+              </Button>
+            </ScheduleModal>
+            <Button size="sm" onClick={() => router.push('/connect')}>
+              Login
             </Button>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
+  )
+}
 
-      {/* ── Hero ── */}
-      <section className="relative mx-auto max-w-6xl px-6 pt-24 pb-32 text-center">
-        {/* glow */}
-        <div
-          className="pointer-events-none absolute left-1/2 top-0 h-[480px] w-[900px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(ellipse, #F58220 0%, transparent 70%)' }}
-        />
+function HeroSection({ router }: { router: ReturnType<typeof useRouter> }) {
+  return (
+    <section className="relative overflow-hidden py-20 lg:py-32">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-8">
+            <Fuel className="h-4 w-4" />
+            <span>Electronic Wallets for Fuel</span>
+          </div>
 
-        <div
-          className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-4 py-1.5 text-xs font-semibold text-orange-400"
-        >
-          <Globe className="h-3.5 w-3.5" /> Built on Stellar · Hack+ Alebrije CDMX 2026
-        </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground text-balance mb-6">
+            Electronic Wallets for total control of your fuel consumption with{' '}
+            <span className="text-primary">TANKO</span>
+          </h1>
 
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-6">
-          Fuel management,{' '}
-          <span style={{ color: '#F58220' }}>trustlessly.</span>
-        </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 text-pretty">
+            The most complete solution for managing vehicle fleets. Lower fees,
+            real-time tracking, and reports that transform data into intelligent
+            decisions.
+          </p>
 
-        <p className="mx-auto max-w-2xl text-lg text-white/50 mb-10 leading-relaxed">
-          TANKO replaces cash advances and corporate cards with on-chain escrows.
-          Fleet managers authorize, the blockchain holds, drivers load — all in
-          seconds and fully auditable.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            size="lg"
-            className="font-semibold text-white px-8 text-base"
-            style={{ background: 'linear-gradient(135deg, #F58220, #e06b10)' }}
-            onClick={handleCTA}
-          >
-            {isConnected ? 'Open Dashboard' : 'Connect wallet'}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <a
-            href="#how-it-works"
-            className="text-sm text-white/45 hover:text-white/70 transition-colors"
-          >
-            See how it works ↓
-          </a>
-        </div>
-
-        {/* stats */}
-        <div className="mx-auto mt-20 grid max-w-3xl grid-cols-3 gap-px rounded-2xl overflow-hidden border border-white/10">
-          {[
-            { value: '< 5 s', label: 'Settlement time' },
-            { value: '$0', label: 'Risk exposure' },
-            { value: '100%', label: 'On-chain audit trail' },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col items-center py-8 px-4"
-              style={{ background: 'rgba(255,255,255,0.03)' }}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <ScheduleModal>
+              <Button size="lg" className="text-lg px-8 py-6">
+                Get Started
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </ScheduleModal>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6"
+              onClick={() => router.push('/')}
             >
-              <span className="text-3xl font-bold" style={{ color: '#F58220' }}>
+              <Glasses className="mr-2 h-5 w-5" />
+              See Demo
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Decorative elements */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 h-72 bg-primary/5 rounded-full blur-3xl -z-10" />
+      <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl -z-10" />
+    </section>
+  )
+}
+
+function StatsSection() {
+  return (
+    <section className="py-16 bg-foreground">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {STATS.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-background mb-2">
                 {stat.value}
-              </span>
-              <span className="mt-1 text-xs text-white/40 uppercase tracking-wider">
-                {stat.label}
-              </span>
+              </div>
+              <div className="text-background/90 font-medium">{stat.label}</div>
+              <div className="text-background/60 text-sm mt-1">
+                {stat.description}
+              </div>
             </div>
           ))}
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ── Features ── */}
-      <section id="features" className="mx-auto max-w-6xl px-6 py-24">
+function FeaturesSection() {
+  return (
+    <section id="features" className="py-20 lg:py-28 bg-card">
+      <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-widest text-orange-400/70 mb-3 font-semibold">
-            Why TANKO
+          <span className="text-primary font-semibold text-sm uppercase tracking-wider">
+            Features
+          </span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-3 mb-4 text-balance">
+            Everything you need to manage your fleet
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            TANKO offers the most advanced tools in the market for total control of
+            your fuel expenses.
           </p>
-          <h2 className="text-4xl font-bold">Everything your fleet needs</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="group rounded-2xl border border-white/8 p-8 transition-all duration-300 hover:border-orange-500/30"
-              style={{ background: 'rgba(255,255,255,0.03)' }}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {FEATURES.map((feature, index) => (
+            <Card
+              key={index}
+              className="group border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
             >
-              <div
-                className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl"
-                style={{ background: 'rgba(245,130,32,0.15)' }}
-              >
-                <f.icon className="h-5 w-5" style={{ color: '#F58220' }} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-              <p className="text-sm text-white/45 leading-relaxed">{f.description}</p>
-            </div>
+              <CardContent className="p-8">
+                <div className="flex items-start gap-6">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <feature.icon className="h-7 w-7 text-primary" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-foreground">
+                        {feature.title}
+                      </h3>
+                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-semibold rounded-full">
+                        {feature.highlight}
+                      </span>
+                    </div>
+                    <p className="text-primary font-medium text-sm mb-3">
+                      {feature.subtitle}
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ── How it works ── */}
-      <section
-        id="how-it-works"
-        className="py-24"
-        style={{ background: 'rgba(255,255,255,0.02)' }}
-      >
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-widest text-orange-400/70 mb-3 font-semibold">
-              The flow
-            </p>
-            <h2 className="text-4xl font-bold">How it works</h2>
-          </div>
+function CTASection() {
+  return (
+    <section className="py-20 lg:py-28">
+      <div className="container mx-auto px-4">
+        <div className="relative bg-primary rounded-3xl p-10 md:p-16 lg:p-20 overflow-hidden">
+          {/* Decorative gradient */}
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-background/30 to-transparent -z-0" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-background/20 rounded-full blur-3xl -z-0" />
 
-          <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
-            {HOW_IT_WORKS.map((step, i) => (
-              <div key={step.step} className="relative flex flex-col items-center text-center">
-                {/* connector line */}
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div
-                    className="hidden md:block absolute top-10 left-[calc(50%+2.75rem)] w-[calc(100%-5.5rem)] h-px"
-                    style={{ background: 'linear-gradient(90deg, rgba(245,130,32,0.4), rgba(245,130,32,0.05))' }}
-                  />
-                )}
-                <div
-                  className="relative mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border border-white/10"
-                  style={{ background: 'rgba(245,130,32,0.1)' }}
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
+            <div className="text-center lg:text-left max-w-2xl">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4 text-balance">
+                Transform your fleet management today
+              </h2>
+              <p className="text-primary-foreground/80 text-lg md:text-xl">
+                Schedule a call with our team of experts and discover how TANKO can reduce your operational costs by up to 25%.
+              </p>
+            </div>
+
+            <div className="flex-shrink-0">
+              <ScheduleModal>
+                <Button
+                  size="lg"
+                  className="bg-background hover:bg-background/90 text-foreground text-lg px-10 py-7 rounded-xl shadow-xl shadow-background/30 hover:shadow-2xl hover:shadow-background/40 transition-all duration-300"
                 >
-                  <step.icon className="h-8 w-8" style={{ color: '#F58220' }} />
-                  <span
-                    className="absolute -top-2.5 -right-2.5 flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold"
-                    style={{ background: '#F58220', color: '#0F1E35' }}
-                  >
-                    {step.step}
-                  </span>
-                </div>
-                <p className="text-[10px] uppercase tracking-widest text-white/30 mb-1 font-semibold">
-                  {step.actor}
-                </p>
-                <h3 className="font-semibold mb-2">{step.title}</h3>
-                <p className="text-xs text-white/40 leading-relaxed">{step.description}</p>
-              </div>
-            ))}
+                  <Calendar className="mr-3 h-6 w-6" />
+                  Schedule a Demo
+                  <ArrowRight className="ml-3 h-5 w-5" />
+                </Button>
+              </ScheduleModal>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* ── For whom ── */}
-      <section id="for-whom" className="mx-auto max-w-6xl px-6 py-24">
-        <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-widest text-orange-400/70 mb-3 font-semibold">
-            Who uses TANKO
+function Footer() {
+  const router = useRouter()
+
+  return (
+    <footer className="bg-card py-12 border-t border-border">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2"
+          >
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Fuel className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <span className="text-lg font-bold text-foreground tracking-tight">
+              TANKO
+            </span>
+          </button>
+
+          <div className="flex items-center gap-8 text-sm">
+            <a
+              href="#"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Terms
+            </a>
+            <a
+              href="#"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Privacy
+            </a>
+            <a
+              href="#"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Contact
+            </a>
+          </div>
+
+          <p className="text-muted-foreground text-sm">
+            © 2026 TANKO. All rights reserved.
           </p>
-          <h2 className="text-4xl font-bold">Built for two roles</h2>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Manager card */}
-          <div
-            className="rounded-2xl border border-white/10 p-10"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
-          >
-            <Building2 className="h-10 w-10 mb-6" style={{ color: '#F58220' }} />
-            <h3 className="text-2xl font-bold mb-3">Fleet Manager</h3>
-            <p className="text-white/45 text-sm mb-6 leading-relaxed">
-              Control every cent of your fuel budget. Authorize loads, release funds,
-              and view your entire operation in real time — without handing out
-              cash or cards.
-            </p>
-            <ul className="space-y-2">
-              {[
-                'Create escrows per fuel load',
-                'Approve & release funds on-chain',
-                'Real-time fleet dashboard',
-                'Automatic audit trail',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm text-white/60">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: '#F58220' }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Driver card */}
-          <div
-            className="rounded-2xl border border-white/10 p-10"
-            style={{ background: 'rgba(255,255,255,0.03)' }}
-          >
-            <Truck className="h-10 w-10 mb-6" style={{ color: '#38d9a9' }} />
-            <h3 className="text-2xl font-bold mb-3">Driver</h3>
-            <p className="text-white/45 text-sm mb-6 leading-relaxed">
-              No more waiting for cash or dealing with receipts. Request the fuel
-              you need, load up, and receive payment instantly to your Stellar
-              wallet once the load is confirmed.
-            </p>
-            <ul className="space-y-2">
-              {[
-                'Virtual wallet on Stellar',
-                'Request fuel loads on the go',
-                'Instant settlement on approval',
-                'No cash — no risk',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm text-white/60">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: '#38d9a9' }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section
-        className="py-24"
-        style={{ background: 'rgba(245,130,32,0.05)', borderTop: '1px solid rgba(245,130,32,0.1)' }}
-      >
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to take control?</h2>
-          <p className="text-white/45 mb-10">
-            Connect your Freighter wallet and start managing your fleet on-chain
-            in under a minute.
-          </p>
-          <Button
-            size="lg"
-            className="font-semibold text-white px-10 text-base"
-            style={{ background: 'linear-gradient(135deg, #F58220, #e06b10)' }}
-            onClick={handleCTA}
-          >
-            {isConnected ? 'Open Dashboard' : 'Connect wallet & start'}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="border-t border-white/5 py-8 text-center text-xs text-white/20">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Fuel className="h-3.5 w-3.5" style={{ color: '#F58220' }} />
-            <span className="font-semibold text-white/40">TANKO</span>
-          </div>
-          <span>Stellar Testnet · Trustless Work · Hack+ Alebrije CDMX 2026</span>
-          <div className="flex items-center gap-4">
-            <Link href="/connect" className="hover:text-white/50 transition-colors">Connect</Link>
-            <Link href="/dashboard" className="hover:text-white/50 transition-colors">Dashboard</Link>
-            <Link href="/dashboard/conductor" className="hover:text-white/50 transition-colors">Driver</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </footer>
   )
 }
