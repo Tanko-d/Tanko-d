@@ -46,7 +46,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!isConnecting && !isConnected) {
-      router.push('/login')
+      router.push('/menu')
     }
   }, [isConnected, isConnecting, router])
 
@@ -93,7 +93,7 @@ export default function DashboardLayout({
 
   const handleDisconnect = () => {
     disconnect()
-    router.push('/login')
+    router.push('/menu')
   }
 
   const handleRoleSwitch = () => {

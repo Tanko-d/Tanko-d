@@ -18,7 +18,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     if (isConnecting) return
 
     if (!isConnected) {
-      router.push('/login')
+      router.push('/menu')
       return
     }
 

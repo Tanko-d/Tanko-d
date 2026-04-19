@@ -89,7 +89,7 @@ export default function MenuPage() {
     if (isConnected && role) {
       router.push(role === 'CONDUCTOR' ? '/dashboard/conductor' : '/dashboard')
     } else {
-      router.push('/login')
+      router.push('/connect')
     }
   }
 
@@ -120,7 +120,7 @@ export default function MenuPage() {
               size="sm"
               className="font-semibold text-white"
               style={{ background: '#F58220' }}
-              onClick={() => router.push('/')}
+              onClick={() => router.push('/connect')}
             >
               <Wallet className="mr-1 h-3.5 w-3.5" />Connect wallet
             </Button>
@@ -368,7 +368,7 @@ export default function MenuPage() {
           </div>
           <span>Stellar Testnet · Trustless Work · Hack+ Alebrije CDMX 2026</span>
           <div className="flex items-center gap-4">
-            <Link href="/" className="hover:text-white/50 transition-colors">Connect</Link>
+            <Link href="/connect" className="hover:text-white/50 transition-colors">Connect</Link>
             <Link href="/dashboard" className="hover:text-white/50 transition-colors">Dashboard</Link>
             <Link href="/dashboard/conductor" className="hover:text-white/50 transition-colors">Driver</Link>
           </div>
