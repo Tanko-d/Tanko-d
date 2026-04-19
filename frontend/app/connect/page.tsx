@@ -1,13 +1,22 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Fuel, Wallet, CheckCircle2, Loader2, ExternalLink, AlertCircle } from 'lucide-react'
+import { Fuel, Wallet, CheckCircle2, Loader2, ExternalLink, AlertCircle, Building2, Truck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/providers/auth-provider'
 
 export default function ConnectPage() {
-  const { isConnected, isConnecting, address, error, connect, disconnect } = useAuth()
+  const { isConnected, isConnecting, address, error, connect, disconnect, setRole } = useAuth()
   const router = useRouter()
+
+  const handleSelectRole = (role: 'JEFE' | 'CONDUCTOR') => {
+    setRole(role)
+    if (role === 'CONDUCTOR') {
+      router.push('/driver')
+    } else {
+      router.push('/dashboard')
+    }
+  }
 
   return (
     <div
@@ -31,7 +40,7 @@ export default function ConnectPage() {
       </div>
 
       {/* Card */}
-      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm shadow-2xl">
+      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm shadow-2xl">
         {isConnected && address ? (
           /* ── Connected state ── */
           <div className="flex flex-col items-center gap-6 text-center">
@@ -46,31 +55,60 @@ export default function ConnectPage() {
                 {address.slice(0, 16)}…{address.slice(-16)}
               </p>
             </div>
-            <div className="flex w-full flex-col gap-3">
-              <Button
-                size="lg"
-                className="w-full font-semibold text-white"
-                style={{ background: '#F58220' }}
-                onClick={() => router.push('/dashboard')}
-              >
-                Go to Dashboard →
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white/30 hover:text-white/50"
-                onClick={disconnect}
-              >
-                Disconnect
-              </Button>
+
+            <div className="w-full">
+              <p className="text-sm text-white/50 mb-4">
+                Select your role to continue:
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => handleSelectRole('JEFE')}
+                  className="flex flex-col items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-orange-500/30 transition-all"
+                >
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{ background: 'rgba(245,130,32,0.15)' }}
+                  >
+                    <Building2 className="h-6 w-6" style={{ color: '#F58220' }} />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-white">Fleet Manager</p>
+                    <p className="text-xs text-white/40 mt-1">Manage fleet</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => handleSelectRole('CONDUCTOR')}
+                  className="flex flex-col items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-green-500/30 transition-all"
+                >
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{ background: 'rgba(56,217,169,0.15)' }}
+                  >
+                    <Truck className="h-6 w-6" style={{ color: '#38d9a9' }} />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-white">Driver</p>
+                    <p className="text-xs text-white/40 mt-1">Fuel requests</p>
+                  </div>
+                </button>
+              </div>
             </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white/30 hover:text-white/50"
+              onClick={disconnect}
+            >
+              Disconnect Wallet
+            </Button>
           </div>
         ) : (
           /* ── Disconnected state ── */
           <div className="flex flex-col items-center gap-6 text-center">
             <div
               className="flex h-16 w-16 items-center justify-center rounded-full ring-2"
-              style={{ background: 'rgba(245,130,32,0.12)', ringColor: 'rgba(245,130,32,0.3)' }}
+              style={{ background: 'rgba(245,130,32,0.12)', borderColor: 'rgba(245,130,32,0.3)' }}
             >
               <Wallet className="h-8 w-8" style={{ color: '#F58220' }} />
             </div>

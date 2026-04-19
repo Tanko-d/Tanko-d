@@ -2,18 +2,15 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { 
-  LayoutDashboard, 
-  Users, 
-  Car, 
-  MapPin, 
-  Receipt, 
-  Settings,
+import {
+  LayoutDashboard,
+  Users,
+  Car,
+  MapPin,
+  Receipt,
   LogOut,
   Menu,
   X,
-  Fuel,
-  ChevronDown,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/providers/auth-provider"
@@ -29,10 +26,6 @@ const navigationJefe = [
   { name: "Locations",  href: "/dashboard/ubicaciones", icon: MapPin },
 ]
 
-const navigationConductor = [
-  { name: "Mi Wallet",  href: "/dashboard/conductor", icon: Fuel },
-]
-
 export default function DashboardLayout({
   children,
 }: {
@@ -42,7 +35,6 @@ export default function DashboardLayout({
   const router = useRouter()
   const { isConnected, isConnecting, address, role, disconnect } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isRoleSwitching, setIsRoleSwitching] = useState(false)
 
   useEffect(() => {
     if (!isConnecting && !isConnected) {
@@ -51,57 +43,27 @@ export default function DashboardLayout({
   }, [isConnected, isConnecting, router])
 
   useEffect(() => {
-    if (role === 'CONDUCTOR' && pathname.startsWith('/dashboard/') && 
-        !pathname.startsWith('/dashboard/conductor') && pathname !== '/dashboard') {
-      setIsRoleSwitching(true)
-      setTimeout(() => {
-        router.push('/dashboard/conductor')
-        setIsRoleSwitching(false)
-      }, 100)
-    } else if (role === 'JEFE' && pathname === '/dashboard/conductor') {
-      setIsRoleSwitching(true)
-      setTimeout(() => {
-        router.push('/dashboard')
-        setIsRoleSwitching(false)
-      }, 100)
+    if (pathname === '/dashboard/conductor') {
+      router.push('/dashboard')
     }
-  }, [role, pathname, router])
+  }, [pathname, router])
 
   if (isConnecting || !isConnected) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Verificando conexión...</p>
+          <p className="text-sm text-muted-foreground">Verifying connection...</p>
         </div>
       </div>
     )
   }
 
-  if (isRoleSwitching) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Cambiando vista...</p>
-        </div>
-      </div>
-    )
-  }
-
-  const navigation = role === 'CONDUCTOR' ? navigationConductor : navigationJefe
+  const navigation = navigationJefe
 
   const handleDisconnect = () => {
     disconnect()
     router.push('/menu')
-  }
-
-  const handleRoleSwitch = () => {
-    if (role === 'CONDUCTOR') {
-      router.push('/dashboard')
-    } else {
-      router.push('/dashboard/conductor')
-    }
   }
 
   return (
@@ -162,21 +124,12 @@ export default function DashboardLayout({
           style={{ borderTopColor: "rgba(255,255,255,0.08)" }}
           className="border-t p-3 space-y-0.5"
         >
-          {role === 'JEFE' && (
-            <button
-              onClick={handleRoleSwitch}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/10 hover:text-white transition-colors"
-            >
-              <Fuel className="h-5 w-5" />
-              Ver como Conductor
-            </button>
-          )}
           <button
             onClick={handleDisconnect}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:bg-white/10 hover:text-white transition-colors"
           >
             <LogOut className="h-5 w-5" />
-            Desconectar
+            Disconnect
           </button>
         </div>
       </aside>
@@ -193,7 +146,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium">
-                {role === 'CONDUCTOR' ? 'Conductor' : 'Jefe de Flota'}
+                {role === 'CONDUCTOR' ? 'Driver' : 'Fleet Manager'}
               </p>
               <p className="text-xs text-muted-foreground font-mono">
                 {address?.slice(0, 8)}...{address?.slice(-8)}
