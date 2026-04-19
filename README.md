@@ -215,7 +215,7 @@ Tanko/
 
 ### Prerequisites
 
-- Node.js ≥ 18
+- Node.js **20.x LTS** (≥ 18; avoid odd major versions like **25** for Prisma/Next unless you have verified compatibility)
 - npm ≥ 9
 - PostgreSQL (local or managed)
 - [Freighter wallet extension](https://freighter.app) installed and set to **Testnet**
@@ -224,11 +224,13 @@ Tanko/
 
 ```bash
 # 1. Clone the repository
-git clone <your-repo-url>
-cd Tanko
+git clone https://github.com/Tanko-d/Tanko-d.git
+cd Tanko-d
 
-# 2. Install all dependencies
+# 2. Install all dependencies (from repo root — must contain package.json)
 npm install
+# The backend workspace runs `prisma generate` on postinstall. If you ever skip it:
+#   npm run db:generate --workspace=backend
 
 # 3. Configure environment variables
 cp .env.example .env
@@ -236,7 +238,6 @@ cp .env.example .env
 
 # 4. Setup database (if using PostgreSQL)
 cd backend
-npx prisma generate
 npx prisma db push
 npx prisma db seed
 cd ..
@@ -277,9 +278,17 @@ npm run dev:backend    # Express on port 3001
 
 ### URLs
 
-- Frontend: http://localhost:3000
+- Frontend: `http://localhost:3000` (default; override with `PORT`, see below)
 - Backend API: http://localhost:3001
 - Backend Health: http://localhost:3001/health
+
+### Troubleshooting (local dev)
+
+| Symptom | What to do |
+| --- | --- |
+| `ENOENT ... package.json` after `npm install` | Run commands from the **cloned repo folder** (`Tanko-d/`), not the parent directory that only contains the clone. |
+| `listen EADDRINUSE ... :::3000` | Another app is using port 3000. Either stop it (e.g. `lsof -i :3000` then quit that process) or start the frontend on another port: `PORT=3005 npm run dev --workspace=frontend` and open `http://localhost:3005`. Set `NEXT_PUBLIC_BACKEND_URL` if the frontend must call the API from a different origin. |
+| `Cannot find module '.prisma/client/default'` | Run `npm run db:generate --workspace=backend` (or `cd backend && npx prisma generate`). After a fresh clone, `npm install` from the repo root should run **`postinstall`** in the backend workspace to generate the client. |
 
 ---
 
