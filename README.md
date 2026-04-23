@@ -429,24 +429,24 @@ struct DriverConfig {
 
 ## CI/CD
 
-Un workflow de GitHub Actions se ejecuta automáticamente en cada **push a `main`** y en cada **pull request con destino `main`**.
+A GitHub Actions workflow runs automatically on every **push to `main`** and every **pull request targeting `main`**.
 
-### Pasos del pipeline (job único: `build-and-test` en `ubuntu-latest`)
+### Pipeline steps (single job: `build-and-test` on `ubuntu-latest`)
 
-| # | Paso | Comando |
+| # | Step | Command |
 |---|------|---------|
-| 1 | Instalar dependencias | `npm ci` |
-| 2 | Generar cliente Prisma | `npx prisma generate --schema=./backend/prisma/schema.prisma` |
+| 1 | Install dependencies | `npm ci` |
+| 2 | Generate Prisma client | `npm run db:generate --workspace=backend` |
 | 3 | Lint — frontend | `npm run lint --workspace=frontend` |
 | 4 | Typecheck — backend | `npm run typecheck --workspace=backend` |
 | 5 | Build — frontend | `npm run build --workspace=frontend` |
 | 6 | Build — backend | `npm run build --workspace=backend` |
-| 7 | Tests — frontend | `npm run test:run --workspace=frontend` |
-| 8 | Tests — backend | `npm run test --workspace=backend` |
+| 7 | Test — frontend | `npm run test:run --workspace=frontend` |
+| 8 | Test — backend | `npm run test --workspace=backend` |
 
-> **Nota sobre ESLint (Issue #5):** El backend usa `tsc --noEmit` como puerta de análisis estático en lugar de ESLint, dado que aún no existe una configuración de ESLint en ese workspace. El paso `npm run lint --workspace=backend` está temporalmente omitido hasta que se resuelva.
+> **Note (Issue #5):** The backend uses `tsc --noEmit` as its static analysis gate. `npm run lint --workspace=backend` is omitted until an ESLint config is added to that workspace.
 
-> **Nota sobre Prisma (Issue #1):** El paso de generación del cliente incluye un fallback (`|| echo "..."`) para que el CI no falle mientras la rama de base de datos no esté completamente integrada en `main`.
+> **Note (Issue #1):** The Prisma generate step includes a fallback (`|| echo "..."`) so CI does not fail while the database branch is not yet merged into `main`.
 
 ---
 
