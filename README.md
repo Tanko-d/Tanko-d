@@ -18,6 +18,7 @@
 9. [Backend API Endpoints](#backend-api-endpoints)
 10. [Smart Contract](#smart-contract)
 11. [Current Status](#current-status)
+12. [CI/CD](#cicd)
 
 ---
 
@@ -423,6 +424,29 @@ struct DriverConfig {
 - [ ] Production environment variables
 - [ ] E2E testing
 - [ ] Deployment configuration
+
+---
+
+## CI/CD
+
+Un workflow de GitHub Actions se ejecuta automáticamente en cada **push a `main`** y en cada **pull request con destino `main`**.
+
+### Pasos del pipeline (job único: `build-and-test` en `ubuntu-latest`)
+
+| # | Paso | Comando |
+|---|------|---------|
+| 1 | Instalar dependencias | `npm ci` |
+| 2 | Generar cliente Prisma | `npx prisma generate --schema=./backend/prisma/schema.prisma` |
+| 3 | Lint — frontend | `npm run lint --workspace=frontend` |
+| 4 | Typecheck — backend | `npm run typecheck --workspace=backend` |
+| 5 | Build — frontend | `npm run build --workspace=frontend` |
+| 6 | Build — backend | `npm run build --workspace=backend` |
+| 7 | Tests — frontend | `npm run test:run --workspace=frontend` |
+| 8 | Tests — backend | `npm run test --workspace=backend` |
+
+> **Nota sobre ESLint (Issue #5):** El backend usa `tsc --noEmit` como puerta de análisis estático en lugar de ESLint, dado que aún no existe una configuración de ESLint en ese workspace. El paso `npm run lint --workspace=backend` está temporalmente omitido hasta que se resuelva.
+
+> **Nota sobre Prisma (Issue #1):** El paso de generación del cliente incluye un fallback (`|| echo "..."`) para que el CI no falle mientras la rama de base de datos no esté completamente integrada en `main`.
 
 ---
 
