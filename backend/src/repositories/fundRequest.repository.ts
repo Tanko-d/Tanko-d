@@ -1,6 +1,12 @@
 import prisma from '../db/prisma.js';
 
-export type FundStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'RELEASED';
+export type FundStatus =
+  | 'PENDING'
+  | 'ESCROW_INITIALIZED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'RELEASED'
+  | 'FAILED_BLOCKCHAIN';
 
 export interface CreateFundRequestDTO {
   liters: number;

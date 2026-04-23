@@ -1,7 +1,6 @@
 import {
   Keypair,
   Transaction,
-  Networks,
   StrKey,
   Horizon,
 } from 'stellar-sdk';
@@ -65,14 +64,14 @@ export class StellarService {
   }
 
   signTransaction(xdr: string, secret: string): string {
-    const transaction = new Transaction(xdr, Networks.TESTNET);
+    const transaction = new Transaction(xdr, config.stellar.networkPassphrase);
     const keypair = this.getKeypairFromSecret(secret);
     transaction.sign(keypair);
     return transaction.toXDR();
   }
 
   async submitTransaction(signedXdr: string): Promise<{ hash: string }> {
-    const transaction = new Transaction(signedXdr, Networks.TESTNET);
+    const transaction = new Transaction(signedXdr, config.stellar.networkPassphrase);
     const response = await this.horizonServer.submitTransaction(transaction);
     return { hash: response.hash };
   }
@@ -106,7 +105,7 @@ export class StellarService {
   }
 
   getNetworkPassphrase(): string {
-    return Networks.TESTNET;
+    return config.stellar.networkPassphrase;
   }
 
   isTestnet(): boolean {
