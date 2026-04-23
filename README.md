@@ -281,6 +281,25 @@ npm run dev:backend    # Express on port 3001
 - Backend API: http://localhost:3001
 - Backend Health: http://localhost:3001/health
 
+### Playwright smoke tests (E2E)
+
+Configuration and tests live under **`frontend/`** (separate from Vitest unit tests).
+
+```bash
+cd frontend
+npm install
+npx playwright install chromium
+```
+
+Run (starts or reuses the Next dev server on port 3000):
+
+```bash
+cd frontend
+npx playwright test
+```
+
+Smoke coverage: `/menu` shell, `/connect` entry, `/dashboard` guard (unauthenticated users end on `/menu`), and `/dashboard` with a documented **`localStorage` wallet stub** (see `frontend/e2e/smoke.spec.ts`) so Freighter is not required headless.
+
 ---
 
 ## Usage Guide
@@ -410,6 +429,7 @@ struct DriverConfig {
 - [x] Escrow services (Trustless Work)
 - [x] Soroban contract skeleton
 - [x] Database schema
+- [x] Playwright smoke E2E (`frontend/`, `npx playwright test`)
 
 ### ⚠️ In Progress
 
@@ -421,7 +441,7 @@ struct DriverConfig {
 ### ❌ Pending
 
 - [ ] Production environment variables
-- [ ] E2E testing
+- [ ] Full E2E coverage beyond Playwright smoke (Freighter-heavy flows, CI wiring)
 - [ ] Deployment configuration
 
 ---
