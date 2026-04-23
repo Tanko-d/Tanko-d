@@ -14,13 +14,18 @@ model User {
   stellarPubKey String? @unique
   role          String    @default("CONDUCTOR")
   status        String    @default("ACTIVE")
+  managerId     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  manager          User?         @relation("ManagerDrivers", fields: [managerId], references: [id])
+  drivers          User[]        @relation("ManagerDrivers")
   units            Unit[]
   driverRequests   FundRequest[] @relation("driver")
-  managerRequests FundRequest[] @relation("manager")
-  fuelLogs        FuelLog[]
+  managerRequests  FundRequest[] @relation("manager")
+  fuelLogs         FuelLog[]
+
+  @@index([managerId])
 }
 
 model Unit {
