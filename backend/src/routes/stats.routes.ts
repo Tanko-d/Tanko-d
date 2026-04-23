@@ -15,6 +15,8 @@ router.get('/stats/recent-transactions', (req, res) => statsController.getRecent
 
 router.get('/stats/reports', (req, res) => statsController.getReportStats(req, res));
 
+router.get('/stats/summary', (req, res) => statsController.getStatsSummary(req, res));
+
 router.get('/driver/:address/stats', (req, res) => statsController.getDriverStats(req, res));
 
 export default router;
