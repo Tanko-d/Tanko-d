@@ -106,3 +106,21 @@ export type GetEscrowsByRoleInput = z.infer<typeof getEscrowsByRoleSchema>;
 export type GetMultipleBalancesInput = z.infer<typeof getMultipleBalancesSchema>;
 export type DisputeEscrowInput = z.infer<typeof disputeEscrowSchema>;
 export type ResolveDisputeInput = z.infer<typeof resolveDisputeSchema>;
+
+// ── Driver Registration ──────────────────────────────────────────────
+
+/** Stellar Public Key: base32, 56 characters, starts with 'G'. */
+export const stellarPubKeySchema = z
+  .string()
+  .length(56, 'Stellar Public Key must be exactly 56 characters')
+  .regex(
+    /^G[A-Z2-7]{55}$/,
+    'Invalid Stellar Public Key format (must start with G, uppercase letters A-Z and digits 2-7)',
+  );
+
+export const registerDriverSchema = z.object({
+  name: z.string().min(1, 'Driver name is required').max(100, 'Name must be 100 characters or less'),
+  stellarPubKey: stellarPubKeySchema,
+});
+
+export type RegisterDriverInput = z.infer<typeof registerDriverSchema>;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { userRepository, CreateUserDTO, UpdateUserDTO, UserRole } from '../repositories/user.repository.js';
+import { userService } from '../services/user.service.js';
 
 export class UserController {
   async getAll(req: Request, res: Response): Promise<void> {
@@ -119,6 +120,35 @@ export class UserController {
       });
     }
   }
+
+  /**
+   * POST /api/v1/users/register-driver
+   * Registers a new CONDUCTOR under the requesting JEFE manager.
+   * Expects header: x-stellar-pubkey (manager's public key)
+   * Body: { name: string, stellarPubKey: string }
+   */
+  async registerDriver(req: Request, res: Response): Promise<void> {
+    try {
+      const managerPubKey = req.headers['x-stellar-pubkey'] as string;
+      if (!managerPubKey) {
+        res.status(400).json({
+          success: false,
+          error: 'x-stellar-pubkey header is required',
+        });
+        return;
+      }
+
+      const driver = await userService.registerDriver(managerPubKey, req.body);
+      res.status(201).json({ success: true, data: driver });
+    } catch (error: any) {
+      const status = error.status || 500;
+      res.status(status).json({
+        success: false,
+        error: error.message || 'Failed to register driver',
+      });
+    }
+  }
 }
 
 export const userController = new UserController();
+
