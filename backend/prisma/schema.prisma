@@ -94,6 +94,23 @@ model FundRequest {
   @@index([status])
 }
 
+model GasStation {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  city      String?
+  state     String?
+  lat       Float?
+  lng       Float?
+  hours     String?
+  services  String[] @default([])
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
 model EscrowConfig {
   id          String   @id @default(uuid())
   name        String   @default("default")
