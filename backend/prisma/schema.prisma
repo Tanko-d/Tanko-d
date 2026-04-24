@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -11,14 +12,14 @@ model User {
   name          String
   email         String    @unique
   phone         String?
-  stellarPubKey String? @unique
+  stellarPubKey String?   @unique
   role          String    @default("CONDUCTOR")
   status        String    @default("ACTIVE")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  units            Unit[]
-  driverRequests   FundRequest[] @relation("driver")
+  units          Unit[]
+  driverRequests  FundRequest[] @relation("driver")
   managerRequests FundRequest[] @relation("manager")
   fuelLogs        FuelLog[]
 }
@@ -32,10 +33,10 @@ model Unit {
   specs         String?
   permitNumber  String?
   permitExpiry  DateTime?
-  monthlySpend  Float   @default(0)
-  status        String  @default("ACTIVE")
+  monthlySpend  Float    @default(0)
+  status        String   @default("ACTIVE")
   userId        String
-  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fuelLogs      FuelLog[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -66,6 +67,7 @@ model FuelLog {
   @@index([unitId])
   @@index([userId])
   @@index([date])
+  @@index([createdAt])
 }
 
 model FundRequest {
@@ -87,6 +89,7 @@ model FundRequest {
   @@index([driverPubKey])
   @@index([managerPubKey])
   @@index([status])
+  @@index([createdAt])
 }
 
 model EscrowConfig {
