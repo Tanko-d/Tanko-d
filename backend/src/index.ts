@@ -12,6 +12,7 @@ import userRoutes from './routes/user.routes.js';
 import unitRoutes from './routes/unit.routes.js';
 import fuelLogRoutes from './routes/fuelLog.routes.js';
 import configRoutes from './routes/config.routes.js';
+import stationRoutes from './routes/station.routes.js';
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/v1', userRoutes);
 app.use('/api/v1', unitRoutes);
 app.use('/api/v1', fuelLogRoutes);
 app.use('/api/v1', configRoutes);
+app.use('/api/v1', stationRoutes);
 app.use('/api/v1/helper', helperRoutes);
 
 app.use((req: Request, res: Response) => {

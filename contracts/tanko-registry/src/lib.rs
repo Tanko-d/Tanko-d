@@ -1,8 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, contracttype, map::Map, vec::Vec as SdkVec, Address, Env,
-    StorageInstance, I128,
+    contract, contractimpl, contracttype, Map, Address, Env,
 };
 
 #[contracttype]
@@ -42,10 +41,10 @@ pub struct TankoRegistry;
 #[contractimpl]
 impl TankoRegistry {
     pub fn init(env: Env, admin: Address) {
-        require!(
+        assert!(
             env.storage()
                 .instance()
-                .get::<_, bool>(&DataKey::Admin)
+                .get::<_, Address>(&DataKey::Admin)
                 .is_none(),
             "Already initialized"
         );
@@ -60,7 +59,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can add drivers");
+        assert!(admin == stored_admin, "Only admin can add drivers");
         admin.require_auth();
 
         let mut drivers = env
@@ -101,7 +100,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can add gas stations");
+        assert!(admin == stored_admin, "Only admin can add gas stations");
         admin.require_auth();
 
         let mut stations = env
@@ -152,7 +151,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can update driver limit");
+        assert!(admin == stored_admin, "Only admin can update driver limit");
         admin.require_auth();
 
         let mut driver_configs = env
@@ -180,7 +179,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can record usage");
+        assert!(admin == stored_admin, "Only admin can record usage");
         admin.require_auth();
 
         let mut driver_configs = env
@@ -207,7 +206,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can reset driver usage");
+        assert!(admin == stored_admin, "Only admin can reset driver usage");
         admin.require_auth();
 
         let mut driver_configs = env
@@ -234,7 +233,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can remove drivers");
+        assert!(admin == stored_admin, "Only admin can remove drivers");
         admin.require_auth();
 
         let mut drivers = env
@@ -252,7 +251,7 @@ impl TankoRegistry {
             .get::<_, Map<Address, DriverConfig>>(&DataKey::DriverConfigs)
             .unwrap_or_else(|| Map::new(&env));
 
-        let mut config = driver_configs.get(driver).unwrap_or_default();
+        let mut config = driver_configs.get(driver.clone()).unwrap_or_default();
         config.is_active = false;
         driver_configs.set(driver, config);
         env.storage()
@@ -267,7 +266,7 @@ impl TankoRegistry {
             .get::<_, Address>(&DataKey::Admin)
             .unwrap_or_else(|| panic!("Contract not initialized"));
 
-        require!(admin == stored_admin, "Only admin can remove gas stations");
+        assert!(admin == stored_admin, "Only admin can remove gas stations");
         admin.require_auth();
 
         let mut stations = env
@@ -306,7 +305,7 @@ impl TankoRegistry {
 #[cfg(test)]
 mod test {
     use super::*;
-    use soroban_sdk::Env;
+    use soroban_sdk::{testutils::Address as _, Env};
 
     #[test]
     fn test_driver_stats_default() {
@@ -314,7 +313,7 @@ mod test {
         let contract_id = env.register_contract(None, TankoRegistry);
         let client = TankoRegistryClient::new(&env, &contract_id);
 
-        let result = client.get_driver_stats(&Address::random(&env));
+        let result = client.get_driver_stats(&Address::generate(&env));
         assert_eq!(result.escrow_limit, 0);
         assert_eq!(result.escrow_used, 0);
         assert_eq!(result.escrow_available, 0);

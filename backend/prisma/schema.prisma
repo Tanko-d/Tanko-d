@@ -14,13 +14,18 @@ model User {
   stellarPubKey String? @unique
   role          String    @default("CONDUCTOR")
   status        String    @default("ACTIVE")
+  managerId     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  manager          User?         @relation("ManagerDrivers", fields: [managerId], references: [id])
+  drivers          User[]        @relation("ManagerDrivers")
   units            Unit[]
   driverRequests   FundRequest[] @relation("driver")
-  managerRequests FundRequest[] @relation("manager")
-  fuelLogs        FuelLog[]
+  managerRequests  FundRequest[] @relation("manager")
+  fuelLogs         FuelLog[]
+
+  @@index([managerId])
 }
 
 model Unit {
@@ -86,6 +91,23 @@ model FundRequest {
 
   @@index([driverPubKey])
   @@index([managerPubKey])
+  @@index([status])
+}
+
+model GasStation {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  city      String?
+  state     String?
+  lat       Float?
+  lng       Float?
+  hours     String?
+  services  String[] @default([])
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([status])
 }
 

@@ -171,6 +171,31 @@ export class FuelLogRepository {
     });
     return result._sum.liters || 0;
   }
+
+  async getConsumptionByUnit() {
+    const result = await prisma.fuelLog.groupBy({
+      by: ['unitId'],
+      _sum: { liters: true, amount: true },
+      orderBy: { _sum: { liters: 'desc' } },
+    });
+
+    const unitIds = result.map(r => r.unitId);
+    const units = await prisma.unit.findMany({
+      where: { id: { in: unitIds } },
+      select: { id: true, make: true, model: true, plates: true },
+    });
+
+    return result.map(r => {
+      const unit = units.find(u => u.id === r.unitId);
+      const unitName = unit ? `${unit.make} ${unit.model} (${unit.plates})` : 'Unknown';
+      return {
+        unitId: r.unitId,
+        name: unitName,
+        liters: r._sum.liters || 0,
+        cost: r._sum.amount || 0,
+      };
+    });
+  }
 }
 
 export const fuelLogRepository = new FuelLogRepository();
