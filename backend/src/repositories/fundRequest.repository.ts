@@ -5,6 +5,13 @@ type DateWindow = {
   startDate?: Date;
   endDate?: Date;
 };
+export type FundStatus =
+  | 'PENDING'
+  | 'ESCROW_INITIALIZED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'RELEASED'
+  | 'FAILED_BLOCKCHAIN';
 
 const THIRTY_DAYS_IN_MS = 30 * 24 * 60 * 60 * 1000;
 const DEFAULT_MANAGER_FIELDS = [

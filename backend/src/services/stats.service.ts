@@ -21,6 +21,21 @@ function normalizeDateArgs(startOrLimit?: DateArg, endDate?: Date, limit = 50) {
 
 class StatsService {
   async getDashboardStats(startDate?: Date, endDate?: Date) {
+export interface StatsSummary {
+  totalLiters: number;
+  totalCost: number;
+  approvedRequests: number;
+  consumptionByUnit: Array<{
+    name: string;
+    value: number;
+  }>;
+}
+
+export class StatsService {
+  async getDashboardStats(): Promise<DashboardStats> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
     const [
       totalFuelSpend,
       totalFuelLiters,
@@ -91,6 +106,30 @@ class StatsService {
       transactions: recentTransactions,
       fuelSpendByDriver,
       fuelLitersByDriver,
+    };
+  }
+
+  async getStatsSummary(): Promise<StatsSummary> {
+    const [
+      totalLitersResult,
+      totalCostResult,
+      approvedRequestsCount,
+      consumptionByUnit,
+    ] = await Promise.all([
+      fuelLogRepository.getTotalLiters(),
+      fuelLogRepository.getTotalSpend(),
+      fundRequestRepository.countByStatus('APPROVED'),
+      fuelLogRepository.getConsumptionByUnit(),
+    ]);
+
+    return {
+      totalLiters: totalLitersResult || 0,
+      totalCost: totalCostResult || 0,
+      approvedRequests: approvedRequestsCount || 0,
+      consumptionByUnit: consumptionByUnit.map(unit => ({
+        name: unit.name,
+        value: unit.liters,
+      })),
     };
   }
 }

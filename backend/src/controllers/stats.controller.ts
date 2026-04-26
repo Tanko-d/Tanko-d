@@ -147,6 +147,18 @@ class StatsController {
       return res.status(500).json({ message });
     }
   }
+
+  async getStatsSummary(req: Request, res: Response): Promise<void> {
+    try {
+      const stats = await statsService.getStatsSummary();
+      res.status(200).json({ success: true, data: stats });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch stats summary',
+      });
+    }
+  }
 }
 
 export const statsController = new StatsController();

@@ -11,7 +11,7 @@ if (rootEnv.error) {
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   env: process.env.NODE_ENV || 'development',
-  
+
   trustlessWork: {
     apiUrl: process.env.TRUSTLESS_WORK_API_URL || 'https://dev.api.trustlesswork.com',
     apiKey: process.env.TRUSTLESS_WORK_API_KEY || '',
@@ -20,6 +20,8 @@ export const config = {
   stellar: {
     network: process.env.STELLAR_NETWORK || 'testnet',
     horizonUrl: process.env.STELLAR_HORIZON_URL || 'https://horizon-testnet.stellar.org',
+    networkPassphrase:
+      process.env.STELLAR_NETWORK_PASSPHRASE || 'Test SDF Network ; September 2015',
   },
 
   cors: {

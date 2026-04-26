@@ -9,6 +9,7 @@ import { fundRequestRepository } from '../repositories/fundRequest.repository.js
 import { escrowConfigRepository } from '../repositories/escrowConfig.repository.js';
 import { escrowMilestoneRepository } from '../repositories/escrowMilestone.repository.js';
 import axios from 'axios';
+import prisma from '../db/prisma.js';
 
 export interface CreateFundRequestInput {
   driverPubKey: string;
@@ -20,7 +21,7 @@ export interface CreateFundRequestInput {
 
 export interface ApproveFundRequestInput {
   requestId: string;
-  managerSecret: string;
+  managerSecret?: string;
 }
 
 export interface ReleaseFundsInput {
@@ -59,16 +60,27 @@ export class FundsService {
   }
 
   async approveRequest(input: ApproveFundRequestInput, managerPubKey: string) {
-    if (!stellarService.validateSecretKey(input.managerSecret)) {
-      return { success: false, error: 'Invalid secret key' };
-    }
-
     const request = await fundRequestRepository.findById(input.requestId);
     if (!request) {
       return { success: false, error: 'Request not found' };
     }
 
-    if (request.status !== 'PENDING') {
+    if (
+      request.status === 'ESCROW_INITIALIZED' &&
+      request.contractId &&
+      request.escrowXdr
+    ) {
+      return {
+        success: true,
+        data: {
+          request: await fundRequestRepository.findById(request.id),
+          contractId: request.contractId,
+          escrowXdr: request.escrowXdr,
+        },
+      };
+    }
+
+    if (!['PENDING', 'FAILED_BLOCKCHAIN'].includes(request.status)) {
       return { success: false, error: `Request is already ${request.status}` };
     }
 
@@ -84,7 +96,7 @@ export class FundsService {
 
     const escrowPayload: CreateEscrowPayload = {
       signer: managerPubKey,
-      engagementId: `FUND-${request.id.substring(0, 8).toUpperCase()}`,
+      engagementId: `TANKO-REQ-${request.id}`,
       title: `Fuel Request - ${request.liters}L`,
       description: request.description || `Fuel request for ${request.liters} liters`,
       roles: {
@@ -98,44 +110,117 @@ export class FundsService {
       },
       amount: request.amount,
       platformFee: escrowConfig.platformFee,
+      milestones: [
+        {
+          title: 'Fuel Log Verification',
+          description: `Release ${request.amount} after valid fuel log submission for request ${request.id}.`,
+          amount: request.amount,
+        },
+      ],
       trustline,
     };
 
-    const escrowResult = await trustlessWorkService.createSingleReleaseEscrow(escrowPayload);
-
-    if (!escrowResult.success || !escrowResult.data) {
-      return { success: false, error: escrowResult.error || 'Failed to create escrow' };
-    }
-
-    const signedXdr = stellarService.signTransaction(
-      escrowResult.data.xdr || '',
-      input.managerSecret
-    );
-
-    const submitResult = await stellarService.submitTransaction(signedXdr);
-
-    await fundRequestRepository.update(request.id, {
-      status: 'APPROVED',
-      contractId: escrowResult.data.contractId,
-      escrowXdr: signedXdr,
-      escrowTxHash: submitResult.hash,
-    });
-
-    const escrowContractId = escrowResult.data.contractId || `fund-${Date.now()}`;
-    await escrowMilestoneRepository.create({
-      escrowId: escrowContractId,
-      contractId: escrowContractId,
+    console.info('[FundsService] Initializing Trustless Work escrow', {
+      requestId: request.id,
       engagementId: escrowPayload.engagementId,
-      title: escrowPayload.title || `Fuel Request`,
-      description: escrowPayload.description || `Fuel request`,
-      amount: request.amount,
-      status: 'APPROVED',
+      managerPubKey,
+      network: stellarService.getNetworkPassphrase(),
     });
 
-    return {
-      success: true,
-      data: await fundRequestRepository.findById(request.id),
-    };
+    try {
+      const escrowResult = await trustlessWorkService.createMultiReleaseEscrow({
+        ...escrowPayload,
+        milestones: escrowPayload.milestones || [],
+      });
+
+      console.info('[FundsService] Trustless Work escrow response', {
+        requestId: request.id,
+        success: escrowResult.success,
+        statusCode: escrowResult.statusCode,
+        contractId: escrowResult.data?.contractId,
+        hasUnsignedXdr: Boolean(
+          escrowResult.data?.unsignedTransaction || escrowResult.data?.xdr
+        ),
+      });
+
+      if (!escrowResult.success || !escrowResult.data) {
+        await fundRequestRepository.update(request.id, {
+          status: 'FAILED_BLOCKCHAIN',
+        });
+
+        return {
+          success: false,
+          error: escrowResult.error || 'Failed to create escrow',
+        };
+      }
+
+      const contractId = escrowResult.data.contractId || escrowResult.data.escrowId;
+      const unsignedXdr = escrowResult.data.unsignedTransaction || escrowResult.data.xdr;
+
+      if (!contractId || !unsignedXdr) {
+        await fundRequestRepository.update(request.id, {
+          status: 'FAILED_BLOCKCHAIN',
+        });
+
+        return {
+          success: false,
+          error: 'Trustless Work response missing contractId or unsigned escrow XDR',
+        };
+      }
+
+      await prisma.$transaction(async (tx: any) => {
+        await tx.fundRequest.update({
+          where: { id: request.id },
+          data: {
+            status: 'ESCROW_INITIALIZED',
+            contractId,
+            escrowXdr: unsignedXdr,
+            escrowTxHash: null,
+          },
+        });
+
+        const existingMilestone = await tx.escrowMilestone.findFirst({
+          where: { contractId },
+        });
+
+        if (!existingMilestone) {
+          await tx.escrowMilestone.create({
+            data: {
+              escrowId: contractId,
+              contractId,
+              engagementId: escrowPayload.engagementId,
+              title: escrowPayload.title || 'Fuel Request',
+              description: escrowPayload.description || 'Fuel request',
+              amount: request.amount,
+              status: 'PENDING',
+            },
+          });
+        }
+      });
+
+      return {
+        success: true,
+        data: {
+          request: await fundRequestRepository.findById(request.id),
+          contractId,
+          escrowXdr: unsignedXdr,
+        },
+      };
+    } catch (error) {
+      await fundRequestRepository.update(request.id, {
+        status: 'FAILED_BLOCKCHAIN',
+      });
+
+      console.error('[FundsService] Escrow initialization failed', {
+        requestId: request.id,
+        error: error instanceof Error ? error.message : error,
+      });
+
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to initialize escrow',
+      };
+    }
   }
 
   async releaseFunds(input: ReleaseFundsInput) {
@@ -148,15 +233,18 @@ export class FundsService {
       return { success: false, error: 'Request not found' };
     }
 
-    if (request.status !== 'APPROVED') {
-      return { success: false, error: 'Request must be approved before releasing funds' };
+    if (!['ESCROW_INITIALIZED', 'APPROVED'].includes(request.status)) {
+      return {
+        success: false,
+        error: 'Request escrow must be initialized before releasing funds',
+      };
     }
 
     if (!request.contractId) {
       return { success: false, error: 'No escrow contract associated' };
     }
 
-    const escrowStatus = await trustlessWorkService.getEscrow(request.contractId);
+    const escrowStatus = await trustlessWorkService.getMultiReleaseEscrow(request.contractId);
 
     if (!escrowStatus.success || !escrowStatus.data) {
       return { success: false, error: 'Failed to get escrow status' };
@@ -166,9 +254,9 @@ export class FundsService {
       return { success: false, error: 'Funds already released' };
     }
 
-    const approveResult = await trustlessWorkService.approveMilestone({
+    const approveResult = await trustlessWorkService.approveMultiReleaseMilestone({
       contractId: request.contractId,
-      milestoneIndex: 0,
+      milestoneIndex: 1,
       signer: input.managerPubKey,
       rolePublicKey: input.managerPubKey,
     });
@@ -183,7 +271,7 @@ export class FundsService {
     );
     await stellarService.submitTransaction(signedApproveXdr);
 
-    const releaseResult = await trustlessWorkService.releaseFunds({
+    const releaseResult = await trustlessWorkService.releaseMultiReleaseFunds({
       contractId: request.contractId,
       signer: input.managerPubKey,
       rolePublicKey: input.managerPubKey,
@@ -308,7 +396,7 @@ export class FundsService {
   }
 
   async getEscrowStatus(contractId: string) {
-    const result = await trustlessWorkService.getEscrow(contractId);
+    const result = await trustlessWorkService.getMultiReleaseEscrow(contractId);
 
     if (!result.success || !result.data) {
       return { success: false, error: result.error || 'Escrow not found' };

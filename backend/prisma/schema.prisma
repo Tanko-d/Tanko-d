@@ -15,6 +15,7 @@ model User {
   stellarPubKey String?   @unique
   role          String    @default("CONDUCTOR")
   status        String    @default("ACTIVE")
+  managerId     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -22,6 +23,14 @@ model User {
   driverRequests  FundRequest[] @relation("driver")
   managerRequests FundRequest[] @relation("manager")
   fuelLogs        FuelLog[]
+  manager          User?         @relation("ManagerDrivers", fields: [managerId], references: [id])
+  drivers          User[]        @relation("ManagerDrivers")
+  units            Unit[]
+  driverRequests   FundRequest[] @relation("driver")
+  managerRequests  FundRequest[] @relation("manager")
+  fuelLogs         FuelLog[]
+
+  @@index([managerId])
 }
 
 model Unit {
@@ -90,6 +99,23 @@ model FundRequest {
   @@index([managerPubKey])
   @@index([status])
   @@index([createdAt])
+}
+
+model GasStation {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  city      String?
+  state     String?
+  lat       Float?
+  lng       Float?
+  hours     String?
+  services  String[] @default([])
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
 }
 
 model EscrowConfig {

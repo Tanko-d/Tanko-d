@@ -49,13 +49,18 @@ export class FundsController {
     try {
       const { requestId, managerSecret, managerPubKey } = req.body;
 
-      if (!requestId || !managerSecret || !managerPubKey) {
-        res.status(400).json({ success: false, error: 'requestId, managerSecret, and managerPubKey are required' });
+      if (!requestId || !managerPubKey) {
+        res.status(400).json({ success: false, error: 'requestId and managerPubKey are required' });
         return;
       }
 
       if (!stellarService.validatePublicKey(managerPubKey)) {
         res.status(400).json({ success: false, error: 'Invalid manager public key' });
+        return;
+      }
+
+      if (managerSecret && !stellarService.validateSecretKey(managerSecret)) {
+        res.status(400).json({ success: false, error: 'Invalid secret key' });
         return;
       }
 
@@ -65,7 +70,12 @@ export class FundsController {
       if (result.success) {
         res.status(200).json(result);
       } else {
-        res.status(400).json(result);
+        const statusCode =
+          typeof result.error === 'string' &&
+          result.error.toLowerCase().includes('failed to create escrow')
+            ? 502
+            : 400;
+        res.status(statusCode).json(result);
       }
     } catch (error) {
       res.status(500).json({
