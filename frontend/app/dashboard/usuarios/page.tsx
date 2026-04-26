@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useCallback } from "react"
 import { 
@@ -24,7 +24,7 @@ import {
 import { useAuth } from "@/providers/auth-provider"
 import RegisterDriverForm from "@/components/forms/RegisterDriverForm"
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:3001"
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:3001";
 
 interface User {
   id: string
@@ -35,12 +35,12 @@ interface User {
   role: string
   managerId?: string | null
   units?: Array<{
-    id: string
-    plates: string
-    make: string
-    model: string
-  }>
-  createdAt: string
+    id: string;
+    plates: string;
+    make: string;
+    model: string;
+  }>;
+  createdAt: string;
 }
 
 export default function UsersPage() {
@@ -104,7 +104,7 @@ export default function UsersPage() {
           <p className="text-sm text-muted-foreground">Cargando usuarios...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -112,11 +112,13 @@ export default function UsersPage() {
       <div className="flex h-[60vh] items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertCircle className="h-8 w-8 text-destructive" />
-          <p className="text-destructive">Error al cargar usuarios</p>
+          <p className="font-medium text-destructive">
+            Error al cargar usuarios
+          </p>
           <p className="text-sm text-muted-foreground">{error}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -161,7 +163,9 @@ export default function UsersPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Lista de Usuarios</CardTitle>
-              <CardDescription>Total: {users.length} usuarios registrados</CardDescription>
+              <CardDescription>
+                Total: {users.length} usuarios registrados
+              </CardDescription>
             </div>
             <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -180,11 +184,21 @@ export default function UsersPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Usuario</th>
-                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Contacto</th>
-                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Wallet</th>
-                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Unidades</th>
-                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">Rol</th>
+                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">
+                      Usuario
+                    </th>
+                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">
+                      Contacto
+                    </th>
+                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">
+                      Wallet
+                    </th>
+                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">
+                      Unidades
+                    </th>
+                    <th className="pb-3 text-left text-sm font-medium text-muted-foreground">
+                      Rol
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -193,12 +207,22 @@ export default function UsersPage() {
                       <td className="py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                            {user.name.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase()}
+                            {user.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{user.name}</p>
+                            <p className="font-medium text-foreground">
+                              {user.name}
+                            </p>
                             <p className="text-xs text-muted-foreground">
-                              Creado: {new Date(user.createdAt).toLocaleDateString("es-MX")}
+                              Creado:{" "}
+                              {new Date(user.createdAt).toLocaleDateString(
+                                "es-MX",
+                              )}
                             </p>
                           </div>
                         </div>
@@ -227,15 +251,19 @@ export default function UsersPage() {
                       <td className="py-4">
                         <div className="flex items-center gap-1.5">
                           <Car className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-foreground">{user.units?.length || 0}</span>
+                          <span className="text-sm text-foreground">
+                            {user.units?.length ?? 0}
+                          </span>
                         </div>
                       </td>
                       <td className="py-4">
-                        <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          user.role === "JEFE"
-                            ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
-                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                        }`}>
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            user.role === "JEFE"
+                              ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                          }`}
+                        >
                           {user.role === "JEFE" ? "Jefe de Flota" : "Conductor"}
                         </span>
                         {user.managerId && (
@@ -250,10 +278,26 @@ export default function UsersPage() {
               </table>
             </div>
           ) : (
-            <p className="text-center py-8 text-muted-foreground">No hay usuarios registrados</p>
+            <Empty className="border border-dashed border-border my-4">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Users className="size-5" />
+                </EmptyMedia>
+                <EmptyTitle>
+                  {searchQuery
+                    ? "Sin resultados"
+                    : "Sin conductores registrados"}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {searchQuery
+                    ? `No hay usuarios que coincidan con "${searchQuery}". Intenta con otro término.`
+                    : "Aún no has agregado ningún conductor a la flota. Los conductores aparecerán aquí una vez que se registren."}
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
