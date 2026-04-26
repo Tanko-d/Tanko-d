@@ -24,6 +24,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/providers/auth-provider"
+import { UnitGrid } from "@/components/UnitGrid"
+import { Unit } from "@/components/UnitCard"
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
@@ -141,6 +146,17 @@ export default function UnidadesPage() {
           </div>
         </CardHeader>
         <CardContent>
+          <UnitGrid 
+            units={filteredUnits} 
+            onUnitAction={(action, unit) => {
+              console.log(`[Units] Action: ${action} on unit:`, unit)
+              // Here would go the logic to open modals/forms as mentioned in issue
+            }}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  )
           {filteredUnits.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredUnits.map((unit) => (
