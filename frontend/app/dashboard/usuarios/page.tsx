@@ -144,6 +144,40 @@ export default function UsersPage() {
       user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.stellarPubKey?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+    setDialogOpen(false)
+    fetchUsers()
+  }
+
+  const filteredUsers = users.filter(user =>
+    user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.stellarPubKey?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  if (loading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando usuarios...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <AlertCircle className="h-8 w-8 text-destructive" />
+          <p className="font-medium text-destructive">
+            Error al cargar usuarios
+          </p>
+          <p className="text-sm text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -195,6 +229,7 @@ export default function UsersPage() {
                 ) : (
                   `Total: ${users.length} usuarios registrados`
                 )}
+                Total: {users.length} usuarios registrados
               </CardDescription>
             </div>
             <div className="relative w-full sm:w-72">
@@ -312,6 +347,73 @@ export default function UsersPage() {
                             {user.role === "JEFE"
                               ? "Jefe de Flota"
                               : "Conductor"}
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id} className="group">
+                      <td className="py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                            {user.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Creado:{" "}
+                              {new Date(user.createdAt).toLocaleDateString(
+                                "es-MX",
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4">
+                        <div className="space-y-1">
+                          {user.email && (
+                            <p className="flex items-center gap-1.5 text-sm text-foreground">
+                              <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                              {user.email}
+                            </p>
+                          )}
+                          {user.phone && (
+                            <p className="flex items-center gap-1.5 text-sm text-foreground">
+                              <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                              {user.phone}
+                            </p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4">
+                        <code className="text-xs font-mono text-muted-foreground">
+                          {user.stellarPubKey?.slice(0, 12)}...{user.stellarPubKey?.slice(-8)}
+                        </code>
+                      </td>
+                      <td className="py-4">
+                        <div className="flex items-center gap-1.5">
+                          <Car className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-foreground">
+                            {user.units?.length ?? 0}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            user.role === "JEFE"
+                              ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
+                              : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                          }`}
+                        >
+                          {user.role === "JEFE" ? "Jefe de Flota" : "Conductor"}
+                        </span>
+                        {user.managerId && (
+                          <span className="ml-1.5 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                            Managed
                           </span>
                           {user.managerId && (
                             <span className="ml-1.5 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
@@ -334,6 +436,24 @@ export default function UsersPage() {
                 </tbody>
               </table>
             </div>
+          ) : (
+            <Empty className="border border-dashed border-border my-4">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <Users className="size-5" />
+                </EmptyMedia>
+                <EmptyTitle>
+                  {searchQuery
+                    ? "Sin resultados"
+                    : "Sin conductores registrados"}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {searchQuery
+                    ? `No hay usuarios que coincidan con "${searchQuery}". Intenta con otro término.`
+                    : "Aún no has agregado ningún conductor a la flota. Los conductores aparecerán aquí una vez que se registren."}
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           )}
         </CardContent>
       </Card>
