@@ -13,6 +13,9 @@ import unitRoutes from './routes/unit.routes.js';
 import fuelLogRoutes from './routes/fuelLog.routes.js';
 import configRoutes from './routes/config.routes.js';
 import stationRoutes from './routes/station.routes.js';
+import fs from "fs";
+import yaml from "js-yaml"
+import path from "path";
 import { ZodError } from 'zod';
 
 const app = express();
@@ -36,6 +39,13 @@ app.get('/health', (req: Request, res: Response) => {
     service: 'TANKO-scrow-backend',
     network: config.stellar.network,
   });
+});
+
+app.get("/api/v1/openapi.json", (req, res) => {
+  const filePath = path.join(process.cwd(), "docs/openapi.yaml");
+  const file = fs.readFileSync(filePath, "utf-8");
+  const json = yaml.load(file);
+  res.json(json);
 });
 
 app.use('/api/v1', escrowRoutes);
