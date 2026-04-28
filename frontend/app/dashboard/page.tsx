@@ -446,7 +446,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentTransactions.length > 0 ? recentTransactions.map((tx) => (
+              {(recentTransactions || []).length > 0 ? (recentTransactions || []).map((tx) => (
                 <div
                   key={tx.id}
                   className="flex items-center justify-between rounded-lg border border-border p-3"
@@ -468,7 +468,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No hay transacciones aún</p>
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No hay transacciones recientes
+                </p>
               )}
             </div>
           </CardContent>
