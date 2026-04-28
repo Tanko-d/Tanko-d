@@ -198,7 +198,7 @@ export default function DashboardLayout({
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsSidebarOpen(false)}
-                style={isActive ? { backgroundColor: "#F58220" } : undefined}
+                style={isActive ? { backgroundColor: "#22c55e" } : undefined}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
                     ? "text-white shadow-md"
