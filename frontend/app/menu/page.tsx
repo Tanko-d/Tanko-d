@@ -127,6 +127,9 @@ function Header({ router }: { router: ReturnType<typeof useRouter> }) {
                 priority
               />
             </div>
+            <span className="text-xl font-bold text-foreground tracking-tight">
+              TANKO
+            </span>
           </button>
 
           <nav className="hidden md:flex items-center gap-8">
