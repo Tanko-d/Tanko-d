@@ -3,6 +3,27 @@ import { fundRequestRepository } from "../repositories/fundRequest.repository.js
 
 type DateArg = Date | number | undefined;
 
+export interface DashboardStats {
+  totalFuelSpend: number;
+  totalFuelLiters: number;
+  totalRequests: number;
+  pendingRequests: number;
+  totalReleased: number;
+  consumptionByDriver: Array<{ driverPubKey: string; totalSpend: number; totalLiters: number; count: number }>;
+  spendByDriver: Array<{ driverPubKey: string; totalSpend: number }>;
+  litersByDriver: Array<{ driverPubKey: string; totalLiters: number }>;
+}
+
+export interface StatsSummary {
+  totalLiters: number;
+  totalCost: number;
+  approvedRequests: number;
+  consumptionByUnit: Array<{
+    name: string;
+    value: number;
+  }>;
+}
+
 function normalizeDateArgs(startOrLimit?: DateArg, endDate?: Date, limit = 50) {
   if (typeof startOrLimit === "number") {
     return {
@@ -20,10 +41,7 @@ function normalizeDateArgs(startOrLimit?: DateArg, endDate?: Date, limit = 50) {
 }
 
 export class StatsService {
-  async getDashboardStats(): Promise<DashboardStats> {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
+  async getDashboardStats(startDate?: Date, endDate?: Date): Promise<DashboardStats> {
     const [
       totalFuelSpend,
       totalFuelLiters,
@@ -44,22 +62,15 @@ export class StatsService {
       fuelLogRepository.getTotalLitersByDriver(startDate, endDate),
     ]);
 
-    const summary = {
-      totalFuelSpend,
-      totalFuelLiters,
-      totalRequests,
-      pendingRequests,
-      totalReleased,
-    };
-
     return {
-      ...summary,
-      summary,
-      dashboardStats: summary,
-      stats: summary,
-      consumptionByDriver,
-      spendByDriver,
-      litersByDriver,
+      totalFuelSpend: totalFuelSpend || 0,
+      totalFuelLiters: totalFuelLiters || 0,
+      totalRequests: totalRequests || 0,
+      pendingRequests: pendingRequests || 0,
+      totalReleased: totalReleased || 0,
+      consumptionByDriver: consumptionByDriver || [],
+      spendByDriver: spendByDriver || [],
+      litersByDriver: litersByDriver || [],
     };
   }
 
@@ -89,8 +100,8 @@ export class StatsService {
       fuelSpendByDriver,
       fuelLitersByDriver,
     ] = await Promise.all([
-      statsService.getDashboardStats(startDate, endDate),
-      statsService.getConsumptionByDriver(startDate, endDate),
+      this.getDashboardStats(startDate, endDate),
+      this.getConsumptionByDriver(startDate, endDate),
       fuelLogRepository.findAll(startDate, endDate),
       fuelLogRepository.getTotalSpendByDriver(startDate, endDate),
       fuelLogRepository.getTotalLitersByDriver(startDate, endDate),

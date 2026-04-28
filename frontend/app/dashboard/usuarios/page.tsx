@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Search, Mail, Phone, Car, AlertCircle, UserPlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import {
+  Search,
+  Mail,
+  Phone,
+  Car,
+  Loader2,
+  AlertCircle,
+  Users,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -12,17 +19,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
 import { useAuth } from "@/providers/auth-provider";
-import RegisterDriverForm from "@/components/forms/RegisterDriverForm";
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:3001";
 
@@ -33,7 +36,6 @@ interface User {
   phone?: string;
   stellarPubKey: string;
   role: string;
-  managerId?: string | null;
   units?: Array<{
     id: string;
     plates: string;
@@ -43,100 +45,31 @@ interface User {
   createdAt: string;
 }
 
-// Skeleton row — matches the 5 columns of the real table exactly
-function TableRowSkeleton() {
-  return (
-    <tr className="border-b border-border">
-      {/* Usuario */}
-      <td className="py-4">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-full shrink-0" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-3 w-24" />
-          </div>
-        </div>
-      </td>
-      {/* Contacto */}
-      <td className="py-4">
-        <div className="space-y-1.5">
-          <Skeleton className="h-3 w-40" />
-          <Skeleton className="h-3 w-28" />
-        </div>
-      </td>
-      {/* Wallet */}
-      <td className="py-4">
-        <Skeleton className="h-3 w-36" />
-      </td>
-      {/* Unidades */}
-      <td className="py-4">
-        <Skeleton className="h-4 w-8" />
-      </td>
-      {/* Rol */}
-      <td className="py-4">
-        <Skeleton className="h-5 w-20 rounded-full" />
-      </td>
-    </tr>
-  );
-}
-
 export default function UsersPage() {
-  const { address: walletAddress, role: userRole } = useAuth();
+  const { address: walletAddress } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const fetchUsers = useCallback(async () => {
-    console.log(`[Users] Fetching from ${BACKEND}/api/v1/users`);
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`${BACKEND}/api/v1/users`);
-      console.log(`[Users] Response status: ${res.status}`);
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log(`[Users] Response:`, data);
-
-      if (data.success && data.data) {
-        setUsers(data.data);
-        toast.success("Usuarios cargados", {
-          description: `${data.data.length} usuarios encontrados.`,
-        });
-      } else {
-        setUsers([]);
-        toast.success("Usuarios cargados", {
-          description: "No se encontraron usuarios registrados.",
-        });
-      }
-    } catch (err) {
-      console.error("[Users] Error fetching data:", err);
-      const message = err instanceof Error ? err.message : "Error de conexión";
-      setError(message);
-      setUsers([]);
-      toast.error("Error al cargar usuarios", {
-        description: message,
-        duration: 4000,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
+    async function fetchUsers() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${BACKEND}/api/v1/users`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setUsers(data.success && data.data ? data.data : []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Error de conexión");
+        setUsers([]);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchUsers();
-  }, [walletAddress, fetchUsers]);
-
-  const handleDriverRegistered = () => {
-    setDialogOpen(false);
-    fetchUsers();
-  };
+  }, [walletAddress]);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -144,15 +77,6 @@ export default function UsersPage() {
       user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.stellarPubKey?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-    setDialogOpen(false)
-    fetchUsers()
-  }
-
-  const filteredUsers = users.filter(user =>
-    user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.stellarPubKey?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   if (loading) {
     return (
@@ -181,41 +105,11 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
-          <p className="text-muted-foreground">
-            Gestionar conductores y usuarios de la wallet de flota
-          </p>
-        </div>
-
-        {userRole === "JEFE" && walletAddress && (
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button id="register-driver-btn" className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                Register Driver
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <UserPlus className="h-5 w-5 text-primary" />
-                  Register New Driver
-                </DialogTitle>
-                <DialogDescription>
-                  Add a new driver to your fleet. They will be linked to your
-                  manager account.
-                </DialogDescription>
-              </DialogHeader>
-              <RegisterDriverForm
-                managerPubKey={walletAddress}
-                onSuccess={handleDriverRegistered}
-                onCancel={() => setDialogOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
-        )}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Usuarios</h1>
+        <p className="text-muted-foreground">
+          Gestionar conductores y usuarios de la wallet de flota
+        </p>
       </div>
 
       <Card>
@@ -224,11 +118,6 @@ export default function UsersPage() {
             <div>
               <CardTitle>Lista de Usuarios</CardTitle>
               <CardDescription>
-                {loading ? (
-                  <Skeleton className="h-4 w-40 mt-1" />
-                ) : (
-                  `Total: ${users.length} usuarios registrados`
-                )}
                 Total: {users.length} usuarios registrados
               </CardDescription>
             </div>
@@ -239,21 +128,12 @@ export default function UsersPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
-                disabled={loading}
               />
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          {error ? (
-            <div className="flex h-[40vh] items-center justify-center">
-              <div className="flex flex-col items-center gap-4 text-center">
-                <AlertCircle className="h-8 w-8 text-destructive" />
-                <p className="text-destructive">Error al cargar usuarios</p>
-                <p className="text-sm text-muted-foreground">{error}</p>
-              </div>
-            </div>
-          ) : (
+          {filteredUsers.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -276,77 +156,6 @@ export default function UsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {loading ? (
-                    Array.from({ length: 6 }).map((_, i) => (
-                      <TableRowSkeleton key={i} />
-                    ))
-                  ) : filteredUsers.length > 0 ? (
-                    filteredUsers.map((user) => (
-                      <tr key={user.id} className="group">
-                        <td className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                              {user.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .slice(0, 2)
-                                .join("")
-                                .toUpperCase()}
-                            </div>
-                            <div>
-                              <p className="font-medium text-foreground">
-                                {user.name}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                Creado:{" "}
-                                {new Date(user.createdAt).toLocaleDateString(
-                                  "es-MX",
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <div className="space-y-1">
-                            {user.email && (
-                              <p className="flex items-center gap-1.5 text-sm text-foreground">
-                                <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                                {user.email}
-                              </p>
-                            )}
-                            {user.phone && (
-                              <p className="flex items-center gap-1.5 text-sm text-foreground">
-                                <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                                {user.phone}
-                              </p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <code className="text-xs font-mono text-muted-foreground">
-                            {user.stellarPubKey?.slice(0, 12)}...
-                            {user.stellarPubKey?.slice(-8)}
-                          </code>
-                        </td>
-                        <td className="py-4">
-                          <div className="flex items-center gap-1.5">
-                            <Car className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm text-foreground">
-                              {user.units?.length || 0}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                              user.role === "JEFE"
-                                ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
-                                : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            }`}
-                          >
-                            {user.role === "JEFE"
-                              ? "Jefe de Flota"
-                              : "Conductor"}
                   {filteredUsers.map((user) => (
                     <tr key={user.id} className="group">
                       <td className="py-4">
@@ -390,7 +199,8 @@ export default function UsersPage() {
                       </td>
                       <td className="py-4">
                         <code className="text-xs font-mono text-muted-foreground">
-                          {user.stellarPubKey?.slice(0, 12)}...{user.stellarPubKey?.slice(-8)}
+                          {user.stellarPubKey.slice(0, 12)}...
+                          {user.stellarPubKey.slice(-8)}
                         </code>
                       </td>
                       <td className="py-4">
@@ -411,28 +221,9 @@ export default function UsersPage() {
                         >
                           {user.role === "JEFE" ? "Jefe de Flota" : "Conductor"}
                         </span>
-                        {user.managerId && (
-                          <span className="ml-1.5 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                            Managed
-                          </span>
-                          {user.managerId && (
-                            <span className="ml-1.5 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                              Managed
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="py-8 text-center text-muted-foreground"
-                      >
-                        No hay usuarios registrados
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>

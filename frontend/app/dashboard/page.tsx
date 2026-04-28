@@ -216,7 +216,7 @@ export default function DashboardPage() {
     {
       title: "Solicitudes Pendientes",
       value: displayStats.pendingRequests.toString(),
-      trend: pendingRequests.length > 0 ? "up" as const : "neutral" as const,
+      trend: (pendingRequests.length > 0 ? "up" : "neutral") as "up" | "down" | "neutral",
       icon: Clock,
       color: "amber"
     },
@@ -348,7 +348,7 @@ export default function DashboardPage() {
                 {stat.trend === "down" && (
                   <ArrowDownRight className="h-3 w-3 text-red-500" />
                 )}
-                <span className={stat.trend === "up" ? "text-emerald-500" : ""}>
+                <span className={stat.trend === "up" ? "text-emerald-500" : stat.trend === "down" ? "text-red-500" : ""}>
                   {stat.title}
                 </span>
               </div>

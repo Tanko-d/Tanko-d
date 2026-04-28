@@ -1,4 +1,5 @@
 {
+  "type": "commonjs",
   "name": "tanko-scrow-backend",
   "version": "1.0.0",
   "description": "Backend for TANKO Scrow - Digital Wallet with Trustless Work Integration",
