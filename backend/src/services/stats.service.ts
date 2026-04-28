@@ -19,18 +19,6 @@ function normalizeDateArgs(startOrLimit?: DateArg, endDate?: Date, limit = 50) {
   };
 }
 
-class StatsService {
-  async getDashboardStats(startDate?: Date, endDate?: Date) {
-export interface StatsSummary {
-  totalLiters: number;
-  totalCost: number;
-  approvedRequests: number;
-  consumptionByUnit: Array<{
-    name: string;
-    value: number;
-  }>;
-}
-
 export class StatsService {
   async getDashboardStats(): Promise<DashboardStats> {
     const now = new Date();
@@ -79,15 +67,28 @@ export class StatsService {
     return fuelLogRepository.getConsumptionByDriver(startDate, endDate);
   }
 
-  async getRecentTransactions(startOrLimit?: DateArg, endDate?: Date, limit = 50) {
+  async getRecentTransactions(
+    startOrLimit?: DateArg,
+    endDate?: Date,
+    limit = 50,
+  ) {
     const normalized = normalizeDateArgs(startOrLimit, endDate, limit);
-    const transactions = await fuelLogRepository.findAll(normalized.startDate, normalized.endDate);
+    const transactions = await fuelLogRepository.findAll(
+      normalized.startDate,
+      normalized.endDate,
+    );
 
     return transactions.slice(0, normalized.limit);
   }
 
   async getReportStats(startDate?: Date, endDate?: Date) {
-    const [summary, consumptionByDriver, recentTransactions, fuelSpendByDriver, fuelLitersByDriver] = await Promise.all([
+    const [
+      summary,
+      consumptionByDriver,
+      recentTransactions,
+      fuelSpendByDriver,
+      fuelLitersByDriver,
+    ] = await Promise.all([
       statsService.getDashboardStats(startDate, endDate),
       statsService.getConsumptionByDriver(startDate, endDate),
       fuelLogRepository.findAll(startDate, endDate),
@@ -118,7 +119,7 @@ export class StatsService {
     ] = await Promise.all([
       fuelLogRepository.getTotalLiters(),
       fuelLogRepository.getTotalSpend(),
-      fundRequestRepository.countByStatus('APPROVED'),
+      fundRequestRepository.countByStatus("APPROVED"),
       fuelLogRepository.getConsumptionByUnit(),
     ]);
 
@@ -126,7 +127,7 @@ export class StatsService {
       totalLiters: totalLitersResult || 0,
       totalCost: totalCostResult || 0,
       approvedRequests: approvedRequestsCount || 0,
-      consumptionByUnit: consumptionByUnit.map(unit => ({
+      consumptionByUnit: consumptionByUnit.map((unit) => ({
         name: unit.name,
         value: unit.liters,
       })),
